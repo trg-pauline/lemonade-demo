@@ -5,6 +5,7 @@ This Helm chart deploys Grafana with monitoring dashboards for the Lemonade Stan
 ## Prerequisites
 
 - OpenShift cluster with cluster-monitoring enabled
+- Cluster admin privileges
 - Grafana Operator installed (or set `operator: true` in values.yaml to install it)
 - Guardrails metrics being exposed by the Lemonade Stand Assistant
 
@@ -49,10 +50,11 @@ The following table lists the configurable parameters and their default values:
 
 The chart includes a pre-configured dashboard for visualizing guardrail metrics:
 
-- **Total Detections**: Overall count of all guardrail detections
 - **Detections by Detector**: Breakdown by detector type (HAP, Prompt Injection, Regex, Language)
-- **Detections by Direction**: Input vs Output detections
-- **Detections Heatmap**: Visualization of all detector combinations
+- **Total Requests**: Overall count of all guardrail requests
+- **Input Blocked**: Count of blocked input requests
+- **Output Blocked**: Count of blocked output responses
+- **Approved Requests**: Count of requests that passed all detectors
 
 ## Uninstall
 

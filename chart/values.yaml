@@ -1,4 +1,11 @@
 ---
+# LLM configuration
+model: {}
+  # name: my-model
+  # endpoint: my-maas-instance
+  # port: 443
+  # api_key: my-api-key
+
 # Detector configuration
 # Configure GPU usage and resources for each detector
 detectors:

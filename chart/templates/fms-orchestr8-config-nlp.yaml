@@ -15,8 +15,8 @@ data:
             port: 8085
     openai: 
       service:
-        hostname: llama-32-predictor
-        port: 8080
+        hostname: {{ .Values.model.endpoint | default "llama-32-predictor" }}
+        port: {{ .Values.model.port | default "8080" }}
     detectors:
       regex_competitor:
         type: text_contents

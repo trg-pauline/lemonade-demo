@@ -1,3 +1,4 @@
+{{ if not .Values.model }}
 ---
 apiVersion: serving.kserve.io/v1alpha1
 kind: ServingRuntime
@@ -88,3 +89,4 @@ spec:
       - effect: NoSchedule
         key: nvidia.com/gpu
         operator: Exists
+{{- end }}

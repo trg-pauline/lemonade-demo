@@ -8,14 +8,13 @@ This quickstart is based on the demo by Trusty AI team. It can be found [here](h
 
 Imagine we run a successful lemonade stand and want to deploy a customer service agent so our customers can learn more about our products. We'll want to make sure all conversations with the agent are family friendly, and that it does not promote our rival fruit juice vendors.
 
-This demo showcases how to deploy an AI-powered customer service assistant with multiple guardrails to ensure safe, compliant, and on-brand interactions. The solution uses [Llama 3.2](https://huggingface.co/RedHatAI/Llama-3.2-3B-Instruct-FP8-dynamic) as the base language model, protected by three detector models that monitor for harmful content, prompt injection attacks, and language compliance.
+This demo showcases how to deploy an AI-powered customer service assistant with multiple guardrails to ensure safe, compliant, and on-brand interactions. The solution uses [Llama 3.2](https://huggingface.co/RedHatAI/Llama-3.2-3B-Instruct-FP8-dynamic) as the default language model (or your own model endpoint), protected by three detector models that monitor for harmful content, prompt injection attacks, and language compliance.
 
-**In this demo, we are following these assumptions of principles:** 
+**In this demo, we are following these principles:** 
 
 1. The LLM is untrusted. All its output must be validated. 
 2. The user is untrusted. All the input must be validated.
-3. Triggering of specific detectors are monitored and visualized. (Alerts are out of scope but could be done)
-
+3. Triggering of specific detectors is monitored and visualized. (Alerts are out of scope but could be done)
 
 ![architecture.png](./docs/images/architecture.png)
 
@@ -28,8 +27,8 @@ To ensure safe and appropriate interactions, the system employs multiple AI guar
 - **[Prompt Injection Detector (DeBERTa v3)](https://huggingface.co/protectai/deberta-v3-base-prompt-injection-v2)**: Identifies and blocks attempts to manipulate the AI assistant
 - **[Lingua Language Detector](https://github.com/pemistahl/lingua)**: Ensures inputs and responses are in English only
 
-Furthemore, there is a:
-- **Regex Detector**: Blocks specific text without the use of models. In our case, its other fruits we consider "competitors".
+Furthermore, there is a:
+- **Regex Detector**: Blocks specific text without the use of models. In our case, it's other fruits we consider "competitors".
 
 The guardrails orchestrator coordinates these detectors to evaluate inputs and outputs before presenting responses to users.
 
@@ -39,17 +38,23 @@ The guardrails orchestrator coordinates these detectors to evaluate inputs and o
 
 https://github.com/user-attachments/assets/998dd37d-6130-4971-b8a2-d4ded8c40a27
 
-#### Monitoring Dashboards
+### Monitoring Dashboards
 
-The solution includes a Grafana dashboard for monitoring guardrail detections in real-time:
+> **Note**: Deploying monitoring dashboards requires cluster admin privileges, whether deploying the Grafana Operator or using the built-in OpenShift dashboard.
+
+The solution includes monitoring dashboards for visualizing guardrail detections in real-time, including detections by detector type, total requests, input/output blocks, and approved requests.
 
 ![Grafana Dashboard](./docs/images/grafana-dashboard.png)
 
-> **Optional**: To deploy the monitoring dashboard, see the [grafana](./grafana) folder for installation instructions. Note that deploying Grafana may require elevated cluster privileges to install the Grafana Operator.
+There are two options for deploying the dashboard:
 
-If you prefer, there is also the option to deploy a version of the dashboard to the build-in OpenShift dashboard viewer. This does not require the grafana deployment, but still requires cluster admin privileges.
+**Option 1: Grafana Dashboard**
 
-The dashboard can be enabled in the top level .helm chart by setting `metrics.dashboard.enabled` to true. If you want to see the dashboard in developer views enable the `odc` label setting as well in the `values.yaml`.
+Deploy a full Grafana instance with pre-configured dashboards. See the [grafana](./grafana) folder for installation instructions.
+
+**Option 2: Built-in OpenShift Dashboard**
+
+Deploy a dashboard to the built-in OpenShift dashboard viewer. This can be enabled in the Helm chart by setting `metrics.dashboard.enabled` to true. If you want to see the dashboard in developer views, enable the `odc` label setting as well in the `values.yaml`.
 
 ```yaml
 # Enable openshift dashboard
@@ -65,7 +70,7 @@ Once deployed the OpenShift dashboard can be found in OpenShift > Observe > Lemo
 
 ### Minimum hardware requirements
 
-**Llama 3.2 3B Instruct (Main LLM):**
+**Llama 3.2 3B Instruct (Main LLM — only when deploying the default model):**
 - CPU: 1 vCPU (request) / 4 vCPU (limit)
 - Memory: 8 GiB (request) / 20 GiB (limit)
 - GPU: 1 NVIDIA GPU (e.g., A10, A100, L40S, T4, or similar)
@@ -85,9 +90,9 @@ Once deployed the OpenShift dashboard can be found in OpenShift > Observe > Lemo
 **Total Resource Requirements:**
 - CPU: 7 vCPU (request) / 16 vCPU (limit)
 - Memory: 30 GiB (request) / 51 GiB (limit)
-- GPU: 1 NVIDIA GPU (for LLM only)
+- GPU: 1 NVIDIA GPU (only when deploying the default model)
 
-> **Note**: The detector models are configured to run on CPU by default. If you have additional GPU resources available and want to improve detector performance, you can enable GPU acceleration for the detectors. See the [Configuration Options](#configuration-options) section for details on customizing GPU usage.
+> **Note**: If you bring your own model endpoint, the LLM resources and GPU are not required. The detector models are configured to run on CPU by default. If you have additional GPU resources available and want to improve detector performance, you can enable GPU acceleration for the detectors. See the [Configuration Options](#configuration-options) section for details on customizing GPU usage.
 
 ### Minimum software requirements
 
@@ -96,14 +101,14 @@ Once deployed the OpenShift dashboard can be found in OpenShift > Observe > Lemo
 
 ### Required user permissions
 
-You need to have cluster admin privileges to create guardrails orchestrator object.
+You need to have cluster admin privileges to create the guardrails orchestrator resources.
 
 ## Deploy
 
 ### Prerequisites
 
 Before deploying, ensure you have:
-- Access to a Red Hat OpenShift cluster with OpenShift AI installed
+- Access to a Red Hat OpenShift cluster with OpenShift AI installed and TrustyAI enabled
 - `oc` CLI tool installed and configured
 - `helm` CLI tool installed
 - Sufficient resources available in your cluster
@@ -123,9 +128,28 @@ oc new-project ${PROJECT}
 ```
 
 3. Install using Helm:
+
+**Option A: Use your own model (MaaS - Model as a Service)**
+
+If you have an existing model endpoint, provide the model name, endpoint, port, and API key:
+```bash
+helm install lemonade-stand-assistant ./chart --namespace ${PROJECT} \
+  --set model.name=YOUR_MODEL_NAME \
+  --set model.endpoint=YOUR_ENDPOINT \
+  --set model.port=443 \
+  --set model.api_key=YOUR_API_KEY
+```
+
+> **Note**: The `model.endpoint` should be the hostname only, without `https://` prefix or trailing `/`.
+
+**Option B: Deploy with the default model**
+
+If you don't provide any model configuration, the chart will automatically deploy a Llama 3.2 3B Instruct model on your cluster:
 ```bash
 helm install lemonade-stand-assistant ./chart --namespace ${PROJECT}
 ```
+
+> **Note**: Option B requires a GPU available in your cluster for the LLM deployment. See [Minimum hardware requirements](#minimum-hardware-requirements) for details.
 
 ### Configuration Options
 
@@ -216,12 +240,10 @@ Models are deployed on OpenShift AI using:
 
 **Description:** AI-powered customer service assistant with guardrails for safe, compliant interactions using an LLM and multiple detector models.
 
-**Industry:** Retail (but it can be applied any industry)
+**Industry:** Retail (but it can be applied to any industry)
 
 **Product:** OpenShift AI, Trusty AI Guardrails Orchestrator feature
 
 **Use case:** AI safety, content moderation
 
 **Contributor org:** Red Hat
-
-

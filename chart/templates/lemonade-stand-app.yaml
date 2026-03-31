@@ -60,7 +60,7 @@ spec:
             - name: GUARDRAILS_ORCHESTRATOR_SERVICE_SERVICE_PORT
               value: "8032"
             - name: VLLM_MODEL
-              value: "llama32"
+              value: {{ .Values.model.name | default "llama32" }}
             - name: VLLM_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -164,7 +164,7 @@ metadata:
     app.kubernetes.io/component: config
 type: Opaque
 stringData:
-  vllm-api-key: ""
+  vllm-api-key: {{ .Values.model.api_key | default "fake" }}
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
