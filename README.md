@@ -117,39 +117,70 @@ Before deploying, ensure you have:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/rh-ai-quickstart/lemonade-stand-assistant.git
-cd lemonade-stand-assistant
+git clone https://github.com/trg-pauline/lemonade-demo.git
+cd lemonade-demo
 ```
 
-2. Create a new OpenShift project:
+2. Create a new OpenShift project and label it for OpenShift AI:
+
 ```bash
-PROJECT="lemonade-stand-assistant"
+PROJECT="lemonade-demo"
 oc new-project ${PROJECT}
+oc label namespace ${PROJECT} opendatahub.io/dashboard=true
 ```
 
 3. Install using Helm:
 
-**Option A: Use your own model (MaaS - Model as a Service)**
+**Option A: Use MaaS (Model as a Service) proxy**
 
-If you have an existing model endpoint, provide the model name, endpoint, port, and API key:
+If you have access to an external OpenAI-compatible API endpoint, you can use the built-in proxy:
+
+1. Copy the example secrets file:
 ```bash
-helm install lemonade-stand-assistant ./chart --namespace ${PROJECT} \
-  --set model.name=YOUR_MODEL_NAME \
+cp chart/values-secrets.yaml.example chart/values-secrets.yaml
+```
+
+2. Edit `chart/values-secrets.yaml` and provide your MaaS configuration:
+```yaml
+maas:
+  endpoint: "your-maas-endpoint.example.com"
+  api_key: "your-api-key-here"
+  model: "your-model-name"
+```
+
+3. Install with MaaS enabled:
+```bash
+helm install lemonade-demo ./chart --namespace ${PROJECT} \
+  --set maas.enabled=true \
+  -f chart/values-secrets.yaml
+```
+
+> **Note**: 
+> - All three fields (`endpoint`, `api_key`, `model`) are **required** when using MaaS
+> - The `endpoint` should be the hostname only, without `https://` prefix or trailing `/`
+> - Ensure your API key has access to the specified model
+> - `values-secrets.yaml` is gitignored and will not be committed
+> - This option does NOT require GPU resources
+
+**Option B: Use a direct model endpoint**
+
+If you have an existing model endpoint (OpenAI-compatible API):
+```bash
+helm install lemonade-demo ./chart --namespace ${PROJECT} \
   --set model.endpoint=YOUR_ENDPOINT \
-  --set model.port=443 \
-  --set model.api_key=YOUR_API_KEY
+  --set model.port=443
 ```
 
 > **Note**: The `model.endpoint` should be the hostname only, without `https://` prefix or trailing `/`.
 
-**Option B: Deploy with the default model**
+**Option C: Deploy with the default local model**
 
 If you don't provide any model configuration, the chart will automatically deploy a Llama 3.2 3B Instruct model on your cluster:
 ```bash
-helm install lemonade-stand-assistant ./chart --namespace ${PROJECT}
+helm install lemonade-demo ./chart --namespace ${PROJECT}
 ```
 
-> **Note**: Option B requires a GPU available in your cluster for the LLM deployment. See [Minimum hardware requirements](#minimum-hardware-requirements) for details.
+> **Note**: Option C requires a GPU available in your cluster for the LLM deployment. See [Minimum hardware requirements](#minimum-hardware-requirements) for details.
 
 ### Configuration Options
 
@@ -166,20 +197,20 @@ Each detector supports the following configuration options:
 
 **Example: Enable GPU for HAP detector (requires additional GPU)**
 ```bash
-helm install lemonade-stand-assistant ./chart --namespace ${PROJECT} \
+helm install lemonade-demo ./chart --namespace ${PROJECT} \
   --set detectors.hap.useGpu=true
 ```
 
 **Example: Enable GPU for all configurable detectors (requires 3 total GPUs)**
 ```bash
-helm install lemonade-stand-assistant ./chart --namespace ${PROJECT} \
+helm install lemonade-demo ./chart --namespace ${PROJECT} \
   --set detectors.hap.useGpu=true \
   --set detectors.promptInjection.useGpu=true
 ```
 
 **Example: Custom resource allocation for HAP detector**
 ```bash
-helm install lemonade-stand-assistant ./chart --namespace ${PROJECT} \
+helm install lemonade-demo ./chart --namespace ${PROJECT} \
   --set detectors.hap.resources.requests.memory=2Gi \
   --set detectors.hap.resources.limits.memory=4Gi
 ```
@@ -189,7 +220,7 @@ helm install lemonade-stand-assistant ./chart --namespace ${PROJECT} \
 Once deployed, access the Lemonade Stand Assistant UI. You can find the route with:
 
 ```bash
-echo https://$(oc get route/lemonade-stand-assistant -n ${PROJECT} --template='{{.spec.host}}')
+echo https://$(oc get route/lemonade-stand -n ${PROJECT} --template='{{.spec.host}}')
 ```
 
 Open the URL in your browser and start asking questions about lemonade and other fruits!
@@ -199,7 +230,7 @@ Open the URL in your browser and start asking questions about lemonade and other
 To remove the deployment:
 
 ```bash
-helm uninstall lemonade-stand-assistant --namespace ${PROJECT}
+helm uninstall lemonade-demo --namespace ${PROJECT}
 ```
 
 ## Technical details

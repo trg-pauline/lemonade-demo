@@ -1,5 +1,5 @@
 apiVersion: v2
-name: lemonade-stand-assistant
+name: lemonade-demo
 description: A Helm chart for Lemonade Stand Assistant Application
 type: application
 version: 1.0.0

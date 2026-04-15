@@ -5,8 +5,8 @@ metadata:
   annotations:
     helm.sh/weight: "0"
     opendatahub.io/recommended-accelerators: '["nvidia.com/gpu"]'
-    openshift.io/display-name: Guardrails Detector ServingRuntime for KServe
-  name: guardrails-detector-runtime-prompt-injection
+    openshift.io/display-name: Prompt Injection Detector Runtime
+  name: prompt-injection-detector-runtime
   labels:
     opendatahub.io/dashboard: 'true'
 spec:
@@ -73,7 +73,7 @@ spec:
           {{- if .Values.detectors.promptInjection.useGpu }}
           nvidia.com/gpu: '1'
           {{- end }}
-      runtime: guardrails-detector-runtime-prompt-injection
+      runtime: prompt-injection-detector-runtime
       storage:
         key: minio-data-connection-detector-models
         path: deberta-v3-base-prompt-injection-v2

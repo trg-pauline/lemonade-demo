@@ -2,7 +2,7 @@
 apiVersion: serving.kserve.io/v1alpha1
 kind: ServingRuntime
 metadata:
-  name: guardrails-detector-runtime-hap
+  name: hap-detector-runtime
   annotations:
     helm.sh/weight: "0"
   labels:
@@ -44,9 +44,9 @@ kind: InferenceService
 metadata:
   annotations:
     helm.sh/weight: "1"
-    openshift.io/display-name: guardrails-detector-ibm-hap
+    openshift.io/display-name: hap-detector
     serving.kserve.io/deploymentMode: RawDeployment
-  name: guardrails-detector-ibm-hap
+  name: hap-detector
   labels:
     opendatahub.io/dashboard: 'true'
 spec:
@@ -71,7 +71,7 @@ spec:
           {{- if .Values.detectors.hap.useGpu }}
           nvidia.com/gpu: '1'
           {{- end }}
-      runtime: guardrails-detector-runtime-hap
+      runtime: hap-detector-runtime
       storage:
         key: minio-data-connection-detector-models
         path: granite-guardian-hap-125m

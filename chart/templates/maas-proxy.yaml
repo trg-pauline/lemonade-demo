@@ -1,0 +1,56 @@
+{{ if .Values.maas.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maas-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: maas-proxy
+  template:
+    metadata:
+      labels:
+        app: maas-proxy
+    spec:
+      containers:
+      - name: proxy
+        image: python:3.11-slim
+        command:
+        - sh
+        - -c
+        args:
+        - |
+          export HOME=/tmp && pip install --user flask requests && python /app/proxy.py
+        env:
+        - name: PYTHONPATH
+          value: /tmp/.local/lib/python3.11/site-packages
+        - name: MAAS_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: maas-api-key
+              key: api_key
+        - name: MAAS_MODEL
+          value: {{ .Values.maas.model | quote }}
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: script
+          mountPath: /app
+      volumes:
+      - name: script
+        configMap:
+          name: maas-proxy-script
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: maas-proxy
+spec:
+  selector:
+    app: maas-proxy
+  ports:
+  - port: 8080
+    targetPort: 8080
+{{- end }}

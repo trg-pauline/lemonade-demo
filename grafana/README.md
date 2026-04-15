@@ -18,8 +18,8 @@ The chart can automatically install the Grafana Operator by setting `operator: t
 ### Deploy Grafana and Dashboards
 
 ```bash
-# Set the namespace (should match your lemonade-stand-assistant namespace)
-NAMESPACE="lemonade-stand-assistant"
+# Set the namespace (should match your lemonade-demo namespace)
+NAMESPACE="lemonade-demo"
 
 # Install the helm chart
 helm install lemonade-grafana ./grafana --namespace ${NAMESPACE}

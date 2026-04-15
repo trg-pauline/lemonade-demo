@@ -1,0 +1,76 @@
+{{ if .Values.maas.enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: maas-proxy-script
+data:
+  proxy.py: |
+    #!/usr/bin/env python3
+    from flask import Flask, request, Response, jsonify
+    import requests
+    import os
+
+    app = Flask(__name__)
+    MAAS_URL = "https://{{ .Values.maas.endpoint }}"
+    API_KEY = os.getenv('MAAS_API_KEY', '')
+
+    @app.route('/tokenize', methods=['POST'])
+    def tokenize():
+        # Return a simple tokenization response
+        # Orchestrator just needs token count for validation
+        data = request.get_json()
+        text = data.get('text', '')
+        # Rough estimate: 1 token per 4 characters
+        token_count = max(1, len(text) // 4)
+        tokens = list(range(token_count))
+        return jsonify({'count': token_count, 'max_model_len': 8192, 'tokens': tokens})
+
+    @app.route('/', defaults={'path': ''}, methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])
+    @app.route('/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE', 'PATCH'])
+    def proxy(path):
+        url = f"{MAAS_URL}/{path}"
+        headers = {k: v for k, v in request.headers if k.lower() != 'host'}
+        # Always add Authorization header
+        headers['Authorization'] = f'Bearer {API_KEY}'
+
+        # For chat completions, ensure the configured model is used
+        data = request.get_data()
+        if path == 'v1/chat/completions' and request.method == 'POST':
+            import json
+            import os
+            configured_model = os.getenv('MAAS_MODEL', '')
+            try:
+                body = json.loads(data)
+                # Override with configured model if set
+                if configured_model and body.get('model') != configured_model:
+                    body['model'] = configured_model
+                    data = json.dumps(body).encode('utf-8')
+            except Exception as e:
+                print(f"ERROR: Failed to parse request body: {e}")
+
+        resp = requests.request(
+            method=request.method,
+            url=url,
+            headers=headers,
+            data=data,
+            verify=True,
+            stream=True
+        )
+        return Response(
+            resp.iter_content(chunk_size=1024),
+            status=resp.status_code,
+            headers=dict(resp.headers)
+        )
+
+    if __name__ == '__main__':
+        app.run(host='0.0.0.0', port=8080)
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: maas-api-key
+type: Opaque
+stringData:
+  api_key: {{ .Values.maas.api_key | quote }}
+{{- end }}

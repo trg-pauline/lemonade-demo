@@ -2,18 +2,18 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: lingua-detector
+  name: language-detector-predictor
   labels:
-    app: lingua-detector
+    app: language-detector-predictor
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: lingua-detector
+      app: language-detector-predictor
   template:
     metadata:
       labels:
-        app: lingua-detector
+        app: language-detector-predictor
     spec:
       containers:
         - resources:
@@ -34,7 +34,7 @@ spec:
             successThreshold: 1
             failureThreshold: 3
           terminationMessagePath: /dev/termination-log
-          name: lingua-detector
+          name: language-detector-predictor
           livenessProbe:
             httpGet:
               path: /health
@@ -65,7 +65,7 @@ spec:
           whenUnsatisfiable: ScheduleAnyway
           labelSelector:
             matchLabels:
-              app: lingua-detector
+              app: language-detector-predictor
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -77,9 +77,9 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: lingua-detector
+  name: language-detector-predictor
   labels:
-    app: lingua-detector
+    app: language-detector-predictor
 spec:
   ports:
     - protocol: TCP
@@ -89,4 +89,4 @@ spec:
   type: ClusterIP
   sessionAffinity: None
   selector:
-    app: lingua-detector
+    app: language-detector-predictor
