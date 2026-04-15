@@ -1,13 +1,3 @@
----
-kind: Secret
-apiVersion: v1
-metadata:
-  name: {{ .Values.grafana.serviceAccount.name }}-token
-  annotations:
-    kubernetes.io/service-account.name: grafana-sa
-    argocd.argoproj.io/sync-wave: "5"
-type: kubernetes.io/service-account-token
----
 apiVersion: v1
 data:
   session_secret: VWVzV3pxbkp4QQ==
@@ -201,35 +191,6 @@ spec:
     security:
       admin_password: "grafana"
       admin_user: "admin"
----
-apiVersion: grafana.integreatly.org/v1beta1
-kind: GrafanaDatasource
-metadata:
-  name: prometheus-grafanadatasource
-spec:
-  valuesFrom:
-    - targetPath: "secureJsonData.httpHeaderValue1"
-      valueFrom:
-        secretKeyRef:
-          name: "{{ .Values.grafana.serviceAccount.name }}-token"
-          key: "token"
-  datasource:
-      access: proxy
-      editable: true
-      isDefault: true
-      jsonData:
-        httpHeaderName1: 'Authorization'
-        timeInterval: {{ .Values.datasource.prometheus.timeInterval }}
-        tlsSkipVerify: true
-      name: Prometheus
-      secureJsonData:
-        httpHeaderValue1: "Bearer ${token}"
-      type: prometheus
-      url: {{ .Values.datasource.prometheus.url | quote }}
-  instanceSelector:
-    matchLabels:
-      dashboards: "grafana"
----
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
