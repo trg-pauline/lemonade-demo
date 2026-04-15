@@ -1,64 +1,51 @@
-# Grafana Dashboard Helm Chart
+# Grafana Setup
 
-This Helm chart deploys Grafana with monitoring dashboards for the Lemonade Stand Assistant guardrails metrics.
+This directory contains Grafana deployment configuration for the Lemonade Stand demo.
 
-## Prerequisites
+## Deployment
 
-- OpenShift cluster with cluster-monitoring enabled
-- Cluster admin privileges
-- Grafana Operator installed (or set `operator: true` in values.yaml to install it)
-- Guardrails metrics being exposed by the Lemonade Stand Assistant
-
-## Installation
-
-### Install the Grafana Operator (if not already installed)
-
-The chart can automatically install the Grafana Operator by setting `operator: true` in values.yaml (enabled by default).
-
-### Deploy Grafana and Dashboards
+### 1. Deploy Grafana via Helm
 
 ```bash
-# Set the namespace (should match your lemonade-demo namespace)
-NAMESPACE="lemonade-demo"
-
-# Install the helm chart
-helm install lemonade-grafana ./grafana --namespace ${NAMESPACE}
+helm install lemonade-grafana ./grafana -n lemonade-demo
 ```
 
-### Access Grafana
+### 2. Setup Datasource
 
-Once deployed, you can access Grafana through the OpenShift route:
+After Grafana is deployed, run the setup script to create the Prometheus datasource:
 
 ```bash
-echo https://$(oc get route/grafana-route -n ${NAMESPACE} --template='{{.spec.host}}')
+./grafana/setup-datasource.sh
 ```
 
-Login with your OpenShift credentials.
+The script will:
+- Wait for Grafana pod to be ready
+- Create a service account token from `prometheus-k8s` in `openshift-monitoring`
+- Store the token in a secret (`grafana-sa-token`)
+- Create the Prometheus datasource via Grafana API
 
-## Configuration
+### 3. Access Grafana
 
-The following table lists the configurable parameters and their default values:
+Get the Grafana URL:
+```bash
+oc get route grafana-route -n lemonade-demo -o jsonpath='{.spec.host}'
+```
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `operator` | Install Grafana Operator | `true` |
-| `grafana.serviceAccount.name` | Service account name | `grafana-sa` |
-| `datasource.prometheus.url` | Prometheus/Thanos URL | `https://thanos-querier.openshift-monitoring.svc.cluster.local:9091` |
-| `datasource.prometheus.timeInterval` | Metrics scrape interval | `5s` |
+**Default credentials:** `admin` / `grafana`
+
+## Token Refresh
+
+The Prometheus token expires after 24 hours. To refresh:
+
+```bash
+./grafana/setup-datasource.sh
+```
+
+Or update the token duration in the script (change `--duration=24h` to a longer value).
 
 ## Dashboards
 
-The chart includes a pre-configured dashboard for visualizing guardrail metrics:
+The Grafana instance includes:
+- **Lemonade Stand Guardrails Metrics** - Shows guardrail detections and request metrics
 
-- **Detections by Detector**: Breakdown by detector type (HAP, Prompt Injection, Regex, Language)
-- **Total Requests**: Overall count of all guardrail requests
-- **Input Blocked**: Count of blocked input requests
-- **Output Blocked**: Count of blocked output responses
-- **Approved Requests**: Count of requests that passed all detectors
-
-## Uninstall
-
-```bash
-helm uninstall lemonade-grafana --namespace ${NAMESPACE}
-```
-
+Dashboards are automatically deployed via the Helm chart.
