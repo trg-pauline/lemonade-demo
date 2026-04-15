@@ -87,6 +87,7 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: Grafana
 metadata:
   name: grafana
+  namespace: {{ .Release.Namespace }}
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
   labels:
@@ -191,10 +192,12 @@ spec:
     security:
       admin_password: "grafana"
       admin_user: "admin"
+---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
   name: lemonade-stand-folder
+  namespace: {{ .Release.Namespace }}
 spec:
   instanceSelector:
     matchLabels:
@@ -206,6 +209,7 @@ spec:
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
+  namespace: {{ .Release.Namespace }}
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
