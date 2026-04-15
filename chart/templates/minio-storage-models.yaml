@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: minio-storage-guardrail-detectors
+  name: minio-storage-guardrails-detectors
   annotations:
     helm.sh/weight: "-5"
 spec:
@@ -12,12 +12,12 @@ spec:
       protocol: TCP
       targetPort: 9000
   selector:
-    app: minio-storage-guardrail-detectors
+    app: minio-storage-guardrails-detectors
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: minio-storage-guardrail-detectors-claim
+  name: minio-storage-guardrails-detectors-claim
   annotations:
     helm.sh/weight: "-5"
 spec:
@@ -31,27 +31,27 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: minio-storage-guardrail-detectors
+  name: minio-storage-guardrails-detectors
   annotations:
     helm.sh/weight: "-4"
   labels:
-    app: minio-storage-guardrail-detectors 
+    app: minio-storage-guardrails-detectors 
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: minio-storage-guardrail-detectors 
+      app: minio-storage-guardrails-detectors 
   template: 
     metadata:
       labels:
-        app: minio-storage-guardrail-detectors
+        app: minio-storage-guardrails-detectors
         maistra.io/expose-route: 'true'
-      name: minio-storage-guardrail-detectors
+      name: minio-storage-guardrails-detectors
     spec:
       volumes:
       - name: model-volume
         persistentVolumeClaim:
-          claimName: minio-storage-guardrail-detectors-claim
+          claimName: minio-storage-guardrails-detectors-claim
       initContainers:
         - name: download-model
           image: quay.io/rgeada/llm_downloader:latest

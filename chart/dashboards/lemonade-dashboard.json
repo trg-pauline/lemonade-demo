@@ -460,7 +460,7 @@
     "style": "dark",
     "tags": [
     "lemonade-stand",
-    "guardrail"
+    "guardrails"
     ],
     "templating": {
     "list": [
@@ -497,7 +497,7 @@
     ]
     },
     "timezone": "browser",
-    "title": "Lemonade Stand Guardrail Metrics",
-    "uid": "lemonade-stand-guardrail",
+    "title": "Lemonade Stand Guardrails Metrics",
+    "uid": "lemonade-stand-guardrails",
     "version": 1
 }
