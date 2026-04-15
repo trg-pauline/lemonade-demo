@@ -13,10 +13,20 @@ data:
         service:
             hostname: chunker-service
             port: 8085
-    openai: 
+    openai:
       service:
+        {{- if .Values.maas.enabled }}
+        hostname: maas-proxy
+        port: 8080
+        protocol: http
+        {{- else }}
         hostname: {{ .Values.model.endpoint | default "llama-32-predictor" }}
         port: {{ .Values.model.port | default "8080" }}
+        {{- end }}
+      {{- if .Values.maas.enabled }}
+      api_key: {{ required "maas.api_key is required when maas.enabled=true" .Values.maas.api_key }}
+      model: {{ required "maas.model is required when maas.enabled=true" .Values.maas.model }}
+      {{- end }}
     detectors:
       regex_competitor:
         type: text_contents
@@ -28,7 +38,7 @@ data:
       hap:
         type: text_contents
         service:
-          hostname: guardrails-detector-ibm-hap-predictor
+          hostname: hap-detector-predictor
           port: 8000
         chunker_id: sentence
         default_threshold: 0.5
@@ -42,7 +52,7 @@ data:
       language_detection:
         type: text_contents
         service:
-          hostname: lingua-detector
+          hostname: language-detector-predictor
           port: 8080
         chunker_id: sentence
         default_threshold: 0.88

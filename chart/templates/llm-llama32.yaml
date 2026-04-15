@@ -1,4 +1,4 @@
-{{ if not .Values.model }}
+{{ if and (not .Values.model) (not .Values.maas.enabled) }}
 ---
 apiVersion: serving.kserve.io/v1alpha1
 kind: ServingRuntime
