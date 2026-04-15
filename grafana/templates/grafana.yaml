@@ -194,6 +194,35 @@ spec:
       admin_user: "admin"
 ---
 apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: prometheus-datasource
+  namespace: {{ .Release.Namespace }}
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  resyncPeriod: 5m
+  valuesFrom:
+    - targetPath: "secureJsonData.httpHeaderValue1"
+      valueFrom:
+        secretKeyRef:
+          name: grafana-sa-token
+          key: bearer-token
+  datasource:
+    name: Prometheus
+    type: prometheus
+    access: proxy
+    url: {{ .Values.datasource.prometheus.url }}
+    isDefault: true
+    jsonData:
+      httpHeaderName1: "Authorization"
+      tlsSkipVerify: true
+      timeInterval: "{{ .Values.datasource.prometheus.timeInterval }}"
+    secureJsonData:
+      httpHeaderValue1: "${bearer-token}"
+---
+apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
 metadata:
   name: lemonade-stand-folder

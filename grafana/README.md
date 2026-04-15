@@ -4,25 +4,31 @@ This directory contains Grafana deployment configuration for the Lemonade Stand 
 
 ## Deployment
 
-### 1. Deploy Grafana via Helm
+### 1. Create the Prometheus token secret
 
-```bash
-helm install lemonade-grafana ./grafana -n lemonade-demo
-```
-
-### 2. Setup Datasource
-
-After Grafana is deployed, run the setup script to create the Prometheus datasource:
+Run the setup script **before** installing the Helm chart. This creates the bearer token
+secret that the Grafana datasource needs to authenticate with Prometheus/Thanos:
 
 ```bash
 ./grafana/setup-datasource.sh
 ```
 
 The script will:
-- Wait for Grafana pod to be ready
+- Ensure the target namespace exists
 - Create a service account token from `prometheus-k8s` in `openshift-monitoring`
-- Store the token in a secret (`grafana-sa-token`)
-- Create the Prometheus datasource via Grafana API
+- Store the token in a Kubernetes secret (`grafana-sa-token`)
+
+### 2. Deploy Grafana via Helm
+
+```bash
+helm install lemonade-grafana ./grafana --namespace lemonade-demo
+```
+
+The Helm chart deploys:
+- Grafana instance (with OAuth proxy)
+- `GrafanaDatasource` CRD (Prometheus, auto-configured from the token secret)
+- `GrafanaDashboard` CRD (Lemonade Stand Guardrails Metrics)
+- RBAC for cluster monitoring access
 
 ### 3. Access Grafana
 
@@ -35,17 +41,18 @@ oc get route grafana-route -n lemonade-demo -o jsonpath='{.spec.host}'
 
 ## Token Refresh
 
-The Prometheus token expires after 24 hours. To refresh:
+The Prometheus token expires after 24 hours. To refresh, re-run the setup script:
 
 ```bash
 ./grafana/setup-datasource.sh
 ```
 
-Or update the token duration in the script (change `--duration=24h` to a longer value).
+The Grafana Operator will automatically pick up the updated secret on its next
+resync cycle (every 5 minutes). No Helm upgrade is needed.
 
 ## Dashboards
 
 The Grafana instance includes:
 - **Lemonade Stand Guardrails Metrics** - Shows guardrail detections and request metrics
 
-Dashboards are automatically deployed via the Helm chart.
+Dashboards are automatically deployed and managed via the `GrafanaDashboard` CRD.
