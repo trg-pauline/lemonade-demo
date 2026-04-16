@@ -133,17 +133,17 @@ def check_regex_locally(text: str) -> bool:
 # User-friendly messages for each detector type (differentiated by input/output)
 DETECTOR_MESSAGES = {
     # HAP (Hate, Abuse, Profanity)
-    "hap_input": "🛑 Your message was flagged for containing potentially harmful or inappropriate content.",
-    "hap_output": "🛑 The response was blocked for containing potentially harmful or inappropriate content.",
+    "hap_input": "🛑 Your message was flagged for harmful content by Granite Guardian HAP detector.",
+    "hap_output": "🛑 The response was blocked for harmful content by Granite Guardian HAP detector.",
     # Prompt injection (typically only on input)
-    "prompt_injection_input": "🛡️ Your message appears to contain instructions that try to override the system rules.",
-    "prompt_injection_output": "🛡️ The response was blocked for containing suspicious instructions.",
+    "prompt_injection_input": "🛡️ Prompt injection detected by DeBERTa v3 detector. Your message appears to contain instructions that try to override the system rules.",
+    "prompt_injection_output": "🛡️ The response was blocked for containing suspicious instructions (DeBERTa v3 detector).",
     # Regex competitor (fruit/topic detection)
     "regex_competitor_input": "🍋 I can only discuss lemons! Other fruits and off-topic subjects are not allowed.",
     "regex_competitor_output": "🍋 Oops! I almost talked about other fruits. Let's stick to lemons!",
     # Language detection
-    "language_detection_input": "🌐 I can only communicate in English. Please rephrase your message in English.",
-    "language_detection_output": "🌐 Oops! I almost answered in non-English. Let's stick to English!",
+    "language_detection_input": "🌐 Non-English language blocked by Lingua detector. Please rephrase your message in English.",
+    "language_detection_output": "🌐 The response was blocked for non-English content (Lingua detector).",
 }
 
 # =============================================================================
@@ -342,6 +342,7 @@ async def process_chat(message: str) -> AsyncGenerator[dict, None]:
                 logger.debug(f"Pattern: {ALL_REGEX_PATTERNS[i][:100]}...")
                 break
         await metrics.increment_local_regex_block()
+        yield {"type": "blocked", "detail": "Off-topic content detected (regex)"}
         yield {
             "type": "error",
             "message": DETECTOR_MESSAGES["regex_competitor_input"] + " Is there anything else I can help you with?",
@@ -519,6 +520,14 @@ async def process_chat(message: str) -> AsyncGenerator[dict, None]:
                             last_model = chunk_model
 
                         if should_block:
+                            detail_map = {
+                                "hap": "Harmful content detected (Granite Guardian HAP)",
+                                "language": "Non-English language blocked (Lingua)",
+                                "prompt-injection": "Prompt injection detected (DeBERTa v3)",
+                                "regex": "Off-topic content detected (regex)",
+                            }
+                            detail = detail_map.get(detector_type, "Content blocked")
+                            yield {"type": "blocked", "detail": detail}
                             yield {"type": "error", "message": block_msg, "detector_type": detector_type}
                             return
 
@@ -551,9 +560,7 @@ async def process_chat(message: str) -> AsyncGenerator[dict, None]:
                         yield {"type": "chunk", "content": truncation_msg}
                         logger.debug("Response truncated (finish_reason=length), appended truncation message")
 
-                    yield {"type": "done"}
-
-                    # Emit usage metadata
+                    # Emit usage metadata before done
                     usage_event = {"type": "usage"}
                     usage_event["model"] = last_model or VLLM_MODEL
                     if last_usage:
@@ -569,6 +576,8 @@ async def process_chat(message: str) -> AsyncGenerator[dict, None]:
                         usage_event["completion_tokens"] = est_completion
                         usage_event["total_tokens"] = est_prompt + est_completion
                     yield usage_event
+
+                    yield {"type": "done"}
 
                     return
 
