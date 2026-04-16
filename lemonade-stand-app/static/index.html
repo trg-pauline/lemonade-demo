@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#171A1C">
+    <meta name="theme-color" content="#FFF8E7">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Lemonade Stand Chat</title>
@@ -11,25 +11,33 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
-            /* Neutrals (Grafana-aligned) */
-            --bg: #171A1C;
-            --panel: #1F242B;
-            --bubble-bot: #2B3440;
-            --bubble-user: #242B33;
-            --text: #E6E8EB;
-            --text-muted: #A7B0BA;
-            --border: #323A44;
+            /* Light mode - Lemonade palette */
+            --bg: #FFF8E7;
+            --panel: #FFFFFF;
+            --bubble-bot: #FFFDF5;
+            --bubble-user: #FEF3C7;
+            --text: #1C1917;
+            --text-muted: #78716C;
+            --border: #E7E0D5;
 
-            /* Brand */
-            --redhat-red: #EE0000;
+            /* Brand accents */
+            --accent: #FACC15;
+            --accent-green: #84CC16;
 
-            /* Semantic colors (Grafana dashboard aligned) */
-            --nonlemon: #FCE957;
-            --nonenglish: #8CA3EF;
-            --jailbreak: #C48AE6;
-            --swearing: #F86877;
-            --blocked: #D6182D;
-            --approved: #23782D;
+            /* Semantic colors (light mode adapted) */
+            --nonlemon: #F59E0B;
+            --nonenglish: #3B82F6;
+            --jailbreak: #8B5CF6;
+            --swearing: #EF4444;
+            --blocked: #DC2626;
+            --approved: #16A34A;
+
+            /* Error tints (10% opacity backgrounds) */
+            --nonlemon-tint: #FEF3C7;
+            --nonenglish-tint: #DBEAFE;
+            --jailbreak-tint: #EDE9FE;
+            --swearing-tint: #FEE2E2;
+            --blocked-tint: #FEE2E2;
         }
 
         * {
@@ -66,14 +74,15 @@
         }
 
         .header {
-            background: var(--redhat-red);
-            color: white;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-green) 100%);
+            color: var(--text);
             padding: 18px 40px;
             text-align: center;
             font-size: 22px;
             font-weight: 600;
             border-radius: 12px;
             margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(250, 204, 21, 0.3);
         }
 
         .chatbot-label {
@@ -85,24 +94,38 @@
             border-radius: 8px 8px 0 0;
             font-size: 14px;
             color: var(--text-muted);
-            margin-bottom: -1px;
-        }
-
-        .chatbot-label svg {
-            width: 16px;
-            height: 16px;
-            fill: currentColor;
+            margin-bottom: 0;
+            border: 1px solid var(--border);
+            border-bottom: 1px solid var(--panel);
+            position: relative;
+            z-index: 1;
         }
 
         .chat-container {
             flex: 1;
             background: var(--panel);
-            border-radius: 0 12px 12px 12px;
+            border-radius: 0 16px 16px 16px;
+            margin-top: -1px;
             display: flex;
             flex-direction: column;
             min-height: 500px;
             max-height: 70vh;
             border: 1px solid var(--border);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .token-total {
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 6px 16px;
+            background: var(--panel);
+            text-align: right;
+        }
+
+        .message-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin: 2px 0 8px 20px;
         }
 
         .messages {
@@ -130,8 +153,8 @@
         }
 
         .example-btn {
-            background: var(--bubble-bot);
-            border: 1px solid var(--border);
+            background: var(--bubble-user);
+            border: 2px solid var(--accent);
             color: var(--text);
             padding: 20px 24px;
             border-radius: 12px;
@@ -142,17 +165,20 @@
             max-width: 280px;
             transition: all 0.2s ease;
             line-height: 1.4;
+            box-shadow: 0 2px 6px rgba(250, 204, 21, 0.15);
         }
 
         .example-btn:hover {
-            background: var(--bubble-user);
-            border-color: var(--text-muted);
+            background: var(--accent);
+            border-color: var(--accent-green);
+            box-shadow: 0 4px 12px rgba(250, 204, 21, 0.3);
+            transform: translateY(-1px);
         }
 
         .message {
             margin: 8px 0;
             padding: 12px 16px;
-            border-radius: 14px;
+            border-radius: 16px;
             max-width: 80%;
             line-height: 1.6;
             animation: fadeIn 0.3s ease;
@@ -168,13 +194,22 @@
             color: var(--text);
             margin-left: auto;
             border-bottom-right-radius: 4px;
-            border-left: 4px solid var(--blocked);
+            border-left: 4px solid var(--accent);
         }
 
         .message.assistant {
             background: var(--bubble-bot);
             color: var(--text);
             border-bottom-left-radius: 4px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--accent-green);
+        }
+
+        .message.assistant::before {
+            content: '🍋';
+            display: block;
+            font-size: 14px;
+            margin-bottom: 4px;
         }
 
         /* Markdown styles */
@@ -192,14 +227,14 @@
         }
         .message.assistant li { margin: 0.2em 0; }
         .message.assistant code {
-            background: var(--bg);
+            background: #F5F0E5;
             padding: 0.15em 0.4em;
             border-radius: 4px;
             font-family: 'SF Mono', Monaco, monospace;
             font-size: 0.9em;
         }
         .message.assistant pre {
-            background: var(--bg);
+            background: #F5F0E5;
             padding: 12px;
             border-radius: 8px;
             overflow-x: auto;
@@ -211,13 +246,13 @@
         }
         .message.assistant strong { font-weight: 600; color: var(--text); }
         .message.assistant blockquote {
-            border-left: 3px solid var(--redhat-red);
+            border-left: 3px solid var(--accent);
             padding-left: 1em;
             margin: 0.5em 0;
             color: var(--text-muted);
         }
 
-        /* Semantic error messages (Grafana-aligned) */
+        /* Semantic error messages (refined light mode) */
         .message.error,
         .message.error-hap,
         .message.error-language,
@@ -225,31 +260,34 @@
         .message.error-regex {
             white-space: pre-line;
             border: none;
+            border-radius: 12px;
+            color: var(--text);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
         }
 
         .message.error {
-            background: var(--blocked);
-            color: #fecaca;
+            background: var(--blocked-tint);
+            border-left: 4px solid var(--blocked);
         }
 
         .message.error-hap {
-            background: var(--swearing);
-            color: #1A0B10;
+            background: var(--swearing-tint);
+            border-left: 4px solid var(--swearing);
         }
 
         .message.error-language {
-            background: var(--nonenglish);
-            color: #0B1020;
+            background: var(--nonenglish-tint);
+            border-left: 4px solid var(--nonenglish);
         }
 
         .message.error-prompt-injection {
-            background: var(--jailbreak);
-            color: #160A1F;
+            background: var(--jailbreak-tint);
+            border-left: 4px solid var(--jailbreak);
         }
 
         .message.error-regex {
-            background: var(--nonlemon);
-            color: #141414;
+            background: var(--nonlemon-tint);
+            border-left: 4px solid var(--nonlemon);
         }
 
         .message.typing::after {
@@ -269,18 +307,24 @@
 
         .input-area {
             padding: 16px;
-            background: var(--bg);
+            background: var(--panel);
             border-top: 1px solid var(--border);
-            border-radius: 0 0 12px 12px;
+            border-radius: 0 0 16px 16px;
         }
 
         .input-wrapper {
             display: flex;
             align-items: center;
             background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: 12px;
+            border: 2px solid var(--border);
+            border-radius: 24px;
             padding: 4px;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.15);
         }
 
         .input-wrapper textarea {
@@ -306,10 +350,10 @@
         .input-wrapper button {
             width: 44px;
             height: 44px;
-            background: var(--bubble-bot);
-            color: var(--text-muted);
+            background: var(--accent);
+            color: var(--text);
             border: none;
-            border-radius: 8px;
+            border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -318,8 +362,8 @@
         }
 
         .input-wrapper button:hover {
-            background: var(--bubble-user);
-            color: var(--text);
+            background: var(--accent-green);
+            color: white;
         }
 
         .input-wrapper button:disabled {
@@ -339,7 +383,7 @@
         }
 
         #stop-btn:hover {
-            background: #b91c1c;
+            background: #991B1B;
         }
 
         .char-count {
@@ -378,8 +422,11 @@
             background: transparent;
         }
         .messages::-webkit-scrollbar-thumb {
-            background: var(--border);
+            background: #D6CFC4;
             border-radius: 3px;
+        }
+        .messages::-webkit-scrollbar-thumb:hover {
+            background: #B8B0A4;
         }
 
         /* Mobile Responsive Styles */
@@ -407,7 +454,7 @@
             .chat-container {
                 min-height: 400px;
                 max-height: calc(100vh - 200px);
-                border-radius: 0 10px 10px 10px;
+                border-radius: 0 14px 14px 14px;
             }
 
             .messages {
@@ -528,14 +575,15 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">Welcome to the Red Hat digital lemonade stand AI Assistant! 🍋</div>
+        <div class="header">Welcome to the Lemonade World! 🍋</div>
 
         <div class="chatbot-label">
-            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
-            Chatbot
+            <span style="font-size: 16px;">🍋</span>
+            ChatLemon
         </div>
 
         <div class="chat-container">
+            <div class="token-total" id="token-total">Tokens: 0</div>
             <div class="messages" id="messages">
                 <div class="examples-container" id="examples-container">
                     <div class="examples">
@@ -568,7 +616,7 @@
     </div>
 
     <div class="footer">
-        Powered by <a href="https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai" target="_blank">Red Hat OpenShift AI</a>
+        Powered by 🍋 <a href="https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai" target="_blank">Red Hat OpenShift AI</a>
     </div>
 
     <script>
@@ -586,10 +634,12 @@
         const sendBtn = document.getElementById('send-btn');
         const stopBtn = document.getElementById('stop-btn');
         const charCount = document.getElementById('char-count');
+        const tokenTotalEl = document.getElementById('token-total');
 
         let abortController = null;
         let stopRequested = false;
         let isStreaming = false;
+        let totalTokens = 0;
 
         function stopStreaming() {
             stopRequested = true;
@@ -753,6 +803,17 @@
                                     streamDone = true;
                                 } else if (data.type === 'done') {
                                     streamDone = true;
+                                } else if (data.type === 'usage') {
+                                    const tokens = data.total_tokens || 0;
+                                    totalTokens += tokens;
+                                    tokenTotalEl.textContent = 'Tokens: ' + totalTokens;
+
+                                    const metaDiv = document.createElement('div');
+                                    metaDiv.className = 'message-meta';
+                                    const completionTokens = data.completion_tokens || 0;
+                                    const modelName = data.model || 'unknown';
+                                    metaDiv.textContent = completionTokens + ' tokens \u00B7 ' + modelName;
+                                    messagesContainer.appendChild(metaDiv);
                                 }
                             } catch (e) {}
                         }

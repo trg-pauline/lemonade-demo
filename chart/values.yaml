@@ -1,4 +1,8 @@
 ---
+# Application image
+app:
+  image: "quay.io/mouachan/lemonade-chatbot:1.0"
+
 # LLM configuration
 # Option 1: Use local model (requires GPU)
 # If model is empty and maas is disabled, Llama 3.2 will be deployed locally
