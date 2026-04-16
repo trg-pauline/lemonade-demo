@@ -46,7 +46,7 @@ spec:
     spec:
       containers:
         - name: lemonade-stand
-          image: quay.io/ckavili/lemon-fastapi:1.0.23
+          image: {{ .Values.app.image | default "quay.io/ckavili/lemon-fastapi:1.0.23" }}
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
