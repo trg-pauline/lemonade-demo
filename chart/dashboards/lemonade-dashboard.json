@@ -1,503 +1,473 @@
 {
+    "__inputs": [],
+    "__requires": [],
     "annotations": {
-    "list": []
+        "list": []
     },
     "editable": true,
     "gnetId": null,
     "graphTooltip": 1,
     "hideControls": false,
+    "id": null,
     "links": [],
     "refresh": "30s",
     "rows": [
-    {
-        "collapse": false,
-        "height": "100px",
-        "panels": [
         {
-            "datasource": "$datasource",
-            "id": 1,
-            "span": 3,
-            "targets": [
-            {
-                "expr": "sum(guardrail_requests_total)",
-                "format": "time_series",
-                "legendFormat": "",
-                "legendLink": null
-            }
+            "collapse": false,
+            "height": "100px",
+            "panels": [
+                {
+                    "datasource": "$datasource",
+                    "id": 1,
+                    "span": 3,
+                    "targets": [
+                        {
+                            "expr": "sum(guardrail_requests_total)",
+                            "format": "time_series",
+                            "legendFormat": "",
+                            "legendLink": null
+                        }
+                    ],
+                    "title": "Total Requests",
+                    "type": "singlestat",
+                    "valueName": "current",
+                    "valueFontSize": "100%",
+                    "format": "none",
+                    "thresholds": "",
+                    "colorBackground": true,
+                    "colorValue": false,
+                    "colors": ["#3B82F6", "#3B82F6", "#3B82F6"],
+                    "sparkline": {
+                        "show": true,
+                        "full": false,
+                        "lineColor": "#FFFFFF",
+                        "fillColor": "rgba(255,255,255,0.15)"
+                    },
+                    "gauge": { "show": false }
+                },
+                {
+                    "datasource": "$datasource",
+                    "id": 2,
+                    "span": 3,
+                    "targets": [
+                        {
+                            "expr": "sum(guardrail_requests_total) - sum(guardrail_detections_total)",
+                            "format": "time_series",
+                            "legendFormat": "",
+                            "legendLink": null
+                        }
+                    ],
+                    "title": "Approved",
+                    "type": "singlestat",
+                    "valueName": "current",
+                    "valueFontSize": "100%",
+                    "format": "none",
+                    "thresholds": "",
+                    "colorBackground": true,
+                    "colorValue": false,
+                    "colors": ["#16A34A", "#16A34A", "#16A34A"],
+                    "sparkline": {
+                        "show": true,
+                        "full": false,
+                        "lineColor": "#FFFFFF",
+                        "fillColor": "rgba(255,255,255,0.15)"
+                    },
+                    "gauge": { "show": false }
+                },
+                {
+                    "datasource": "$datasource",
+                    "id": 3,
+                    "span": 3,
+                    "targets": [
+                        {
+                            "expr": "sum(guardrail_detections_by_direction{direction=\"input\"})",
+                            "format": "time_series",
+                            "legendFormat": "",
+                            "legendLink": null
+                        }
+                    ],
+                    "title": "Input Blocked",
+                    "type": "singlestat",
+                    "valueName": "current",
+                    "valueFontSize": "100%",
+                    "format": "none",
+                    "thresholds": "1,5",
+                    "colorBackground": true,
+                    "colorValue": false,
+                    "colors": ["#16A34A", "#F97316", "#DC2626"],
+                    "sparkline": {
+                        "show": true,
+                        "full": false,
+                        "lineColor": "#FFFFFF",
+                        "fillColor": "rgba(255,255,255,0.15)"
+                    },
+                    "gauge": { "show": false }
+                },
+                {
+                    "datasource": "$datasource",
+                    "id": 4,
+                    "span": 3,
+                    "targets": [
+                        {
+                            "expr": "sum(guardrail_detections_by_direction{direction=\"output\"})",
+                            "format": "time_series",
+                            "legendFormat": "",
+                            "legendLink": null
+                        }
+                    ],
+                    "title": "Output Blocked",
+                    "type": "singlestat",
+                    "valueName": "current",
+                    "valueFontSize": "100%",
+                    "format": "none",
+                    "thresholds": "1,5",
+                    "colorBackground": true,
+                    "colorValue": false,
+                    "colors": ["#16A34A", "#F97316", "#DC2626"],
+                    "sparkline": {
+                        "show": true,
+                        "full": false,
+                        "lineColor": "#FFFFFF",
+                        "fillColor": "rgba(255,255,255,0.15)"
+                    },
+                    "gauge": { "show": false }
+                }
             ],
-            "title": "Total Requests",
-            "type": "singlestat",
-            "valueName": "current",
-            "valueFontSize": "100%",
-            "format": "none",
-            "thresholds": "",
-            "colorBackground": true,
-            "colorValue": false,
-            "colors": [
-            "#3B99FC",
-            "#3B99FC",
-            "#3B99FC"
-            ],
-            "sparkline": {
-            "show": true,
-            "full": false,
-            "lineColor": "#FFFFFF",
-            "fillColor": "rgba(255,255,255,0.15)"
-            },
-            "gauge": {
-            "show": false
-            }
+            "repeat": null,
+            "repeatIteration": null,
+            "repeatRowId": null,
+            "showTitle": true,
+            "title": "Guardrail Summary",
+            "titleSize": "h6"
         },
         {
-            "datasource": "$datasource",
-            "id": 2,
-            "span": 3,
-            "targets": [
-            {
-                "expr": "sum(guardrail_requests_total) - sum(guardrail_detections_total)",
-                "format": "time_series",
-                "legendFormat": "",
-                "legendLink": null
-            }
+            "collapse": false,
+            "height": "250px",
+            "panels": [
+                {
+                    "aliasColors": {
+                        "Swearing (HAP)": "#EF4444",
+                        "Non-English": "#3B82F6",
+                        "Jailbreak": "#8B5CF6",
+                        "Non-Lemon": "#FACC15"
+                    },
+                    "bars": true,
+                    "dashLength": 10,
+                    "dashes": false,
+                    "datasource": "$datasource",
+                    "fill": 10,
+                    "id": 5,
+                    "legend": {
+                        "avg": false,
+                        "current": true,
+                        "max": true,
+                        "min": false,
+                        "show": true,
+                        "total": false,
+                        "values": true
+                    },
+                    "lines": false,
+                    "linewidth": 0,
+                    "links": [],
+                    "nullPointMode": "null as zero",
+                    "percentage": false,
+                    "pointradius": 5,
+                    "points": false,
+                    "renderer": "flot",
+                    "seriesOverrides": [],
+                    "spaceLength": 10,
+                    "span": 6,
+                    "stack": true,
+                    "steppedLine": false,
+                    "targets": [
+                        {
+                            "expr": "sum(guardrail_detections_by_detector{detector=\"hap\"})",
+                            "format": "time_series",
+                            "legendFormat": "Swearing (HAP)",
+                            "legendLink": null
+                        },
+                        {
+                            "expr": "sum(guardrail_detections_by_detector{detector=\"language_detection\"})",
+                            "format": "time_series",
+                            "legendFormat": "Non-English",
+                            "legendLink": null
+                        },
+                        {
+                            "expr": "sum(guardrail_detections_by_detector{detector=\"prompt_injection\"})",
+                            "format": "time_series",
+                            "legendFormat": "Jailbreak",
+                            "legendLink": null
+                        },
+                        {
+                            "expr": "sum(guardrail_detections_by_detector{detector=\"regex_competitor\"})",
+                            "format": "time_series",
+                            "legendFormat": "Non-Lemon",
+                            "legendLink": null
+                        }
+                    ],
+                    "thresholds": [],
+                    "timeFrom": null,
+                    "timeShift": null,
+                    "title": "Detections by Type",
+                    "tooltip": {
+                        "shared": true,
+                        "sort": 2,
+                        "value_type": "individual"
+                    },
+                    "type": "graph",
+                    "xaxis": {
+                        "buckets": null,
+                        "mode": "time",
+                        "name": null,
+                        "show": true,
+                        "values": []
+                    },
+                    "yaxes": [
+                        { "format": "short", "label": "Detections", "logBase": 1, "max": null, "min": 0, "show": true },
+                        { "format": "short", "label": null, "logBase": 1, "max": null, "min": null, "show": false }
+                    ]
+                },
+                {
+                    "aliasColors": {
+                        "Input Blocked": "#DC2626",
+                        "Output Blocked": "#F97316"
+                    },
+                    "bars": false,
+                    "dashLength": 10,
+                    "dashes": false,
+                    "datasource": "$datasource",
+                    "fill": 5,
+                    "id": 6,
+                    "legend": {
+                        "avg": false,
+                        "current": true,
+                        "max": true,
+                        "min": false,
+                        "show": true,
+                        "total": false,
+                        "values": true
+                    },
+                    "lines": true,
+                    "linewidth": 2,
+                    "links": [],
+                    "nullPointMode": "null as zero",
+                    "percentage": false,
+                    "pointradius": 5,
+                    "points": false,
+                    "renderer": "flot",
+                    "seriesOverrides": [],
+                    "spaceLength": 10,
+                    "span": 6,
+                    "stack": true,
+                    "steppedLine": false,
+                    "targets": [
+                        {
+                            "expr": "sum(guardrail_detections_by_direction{direction=\"input\"})",
+                            "format": "time_series",
+                            "legendFormat": "Input Blocked",
+                            "legendLink": null
+                        },
+                        {
+                            "expr": "sum(guardrail_detections_by_direction{direction=\"output\"})",
+                            "format": "time_series",
+                            "legendFormat": "Output Blocked",
+                            "legendLink": null
+                        }
+                    ],
+                    "thresholds": [],
+                    "timeFrom": null,
+                    "timeShift": null,
+                    "title": "Blocked by Direction",
+                    "tooltip": {
+                        "shared": true,
+                        "sort": 2,
+                        "value_type": "individual"
+                    },
+                    "type": "graph",
+                    "xaxis": {
+                        "buckets": null,
+                        "mode": "time",
+                        "name": null,
+                        "show": true,
+                        "values": []
+                    },
+                    "yaxes": [
+                        { "format": "short", "label": "Blocked", "logBase": 1, "max": null, "min": 0, "show": true },
+                        { "format": "short", "label": null, "logBase": 1, "max": null, "min": null, "show": false }
+                    ]
+                }
             ],
-            "title": "Approved Requests",
-            "type": "singlestat",
-            "valueName": "current",
-            "valueFontSize": "100%",
-            "format": "none",
-            "thresholds": "",
-            "colorBackground": true,
-            "colorValue": false,
-            "colors": [
-            "#73C586",
-            "#73C586",
-            "#73C586"
-            ],
-            "sparkline": {
-            "show": true,
-            "full": false,
-            "lineColor": "#FFFFFF",
-            "fillColor": "rgba(255,255,255,0.15)"
-            },
-            "gauge": {
-            "show": false
-            }
+            "repeat": null,
+            "repeatIteration": null,
+            "repeatRowId": null,
+            "showTitle": true,
+            "title": "Detections",
+            "titleSize": "h6"
         },
         {
-            "datasource": "$datasource",
-            "id": 3,
-            "span": 3,
-            "targets": [
-            {
-                "expr": "sum(guardrail_detections_by_direction{direction=\"input\"})",
-                "format": "time_series",
-                "legendFormat": "",
-                "legendLink": null
-            }
+            "collapse": false,
+            "height": "250px",
+            "panels": [
+                {
+                    "aliasColors": {
+                        "Total Requests": "#3B82F6",
+                        "Approved": "#16A34A",
+                        "Blocked": "#DC2626"
+                    },
+                    "bars": false,
+                    "dashLength": 10,
+                    "dashes": false,
+                    "datasource": "$datasource",
+                    "fill": 1,
+                    "id": 7,
+                    "legend": {
+                        "avg": false,
+                        "current": true,
+                        "max": true,
+                        "min": true,
+                        "show": true,
+                        "total": false,
+                        "values": true
+                    },
+                    "lines": true,
+                    "linewidth": 2,
+                    "links": [],
+                    "nullPointMode": "null as zero",
+                    "percentage": false,
+                    "pointradius": 5,
+                    "points": false,
+                    "renderer": "flot",
+                    "seriesOverrides": [],
+                    "spaceLength": 10,
+                    "span": 12,
+                    "stack": false,
+                    "steppedLine": false,
+                    "targets": [
+                        {
+                            "expr": "sum(guardrail_requests_total)",
+                            "format": "time_series",
+                            "legendFormat": "Total Requests",
+                            "legendLink": null
+                        },
+                        {
+                            "expr": "sum(guardrail_requests_total) - sum(guardrail_detections_total)",
+                            "format": "time_series",
+                            "legendFormat": "Approved",
+                            "legendLink": null
+                        },
+                        {
+                            "expr": "sum(guardrail_detections_total)",
+                            "format": "time_series",
+                            "legendFormat": "Blocked",
+                            "legendLink": null
+                        }
+                    ],
+                    "thresholds": [],
+                    "timeFrom": null,
+                    "timeShift": null,
+                    "title": "Request Traffic",
+                    "tooltip": {
+                        "shared": true,
+                        "sort": 2,
+                        "value_type": "individual"
+                    },
+                    "type": "graph",
+                    "xaxis": {
+                        "buckets": null,
+                        "mode": "time",
+                        "name": null,
+                        "show": true,
+                        "values": []
+                    },
+                    "yaxes": [
+                        { "format": "short", "label": "Requests", "logBase": 1, "max": null, "min": 0, "show": true },
+                        { "format": "short", "label": null, "logBase": 1, "max": null, "min": null, "show": false }
+                    ]
+                }
             ],
-            "title": "Input Blocked",
-            "type": "singlestat",
-            "valueName": "current",
-            "valueFontSize": "100%",
-            "format": "none",
-            "thresholds": "1,5",
-            "colorBackground": true,
-            "colorValue": false,
-            "colors": [
-            "#73C586",
-            "#FF9900",
-            "#E02525"
-            ],
-            "sparkline": {
-            "show": true,
-            "full": false,
-            "lineColor": "#FFFFFF",
-            "fillColor": "rgba(255,255,255,0.15)"
-            },
-            "gauge": {
-            "show": false
-            }
+            "repeat": null,
+            "repeatIteration": null,
+            "repeatRowId": null,
+            "showTitle": true,
+            "title": "Traffic",
+            "titleSize": "h6"
         },
         {
-            "datasource": "$datasource",
-            "id": 4,
-            "span": 3,
-            "targets": [
-            {
-                "expr": "sum(guardrail_detections_by_direction{direction=\"output\"})",
-                "format": "time_series",
-                "legendFormat": "",
-                "legendLink": null
-            }
+            "collapse": false,
+            "height": "100px",
+            "panels": [
+                {
+                    "datasource": "$datasource",
+                    "id": 8,
+                    "span": 12,
+                    "targets": [
+                        {
+                            "expr": "sum(guardrail_local_regex_blocks_total)",
+                            "format": "time_series",
+                            "legendFormat": "",
+                            "legendLink": null
+                        }
+                    ],
+                    "title": "Local Regex Blocks (pre-orchestrator)",
+                    "type": "singlestat",
+                    "valueName": "current",
+                    "valueFontSize": "100%",
+                    "format": "none",
+                    "thresholds": "",
+                    "colorBackground": true,
+                    "colorValue": false,
+                    "colors": ["#06B6D4", "#06B6D4", "#06B6D4"],
+                    "sparkline": {
+                        "show": true,
+                        "full": false,
+                        "lineColor": "#FFFFFF",
+                        "fillColor": "rgba(255,255,255,0.15)"
+                    },
+                    "gauge": { "show": false }
+                }
             ],
-            "title": "Output Blocked",
-            "type": "singlestat",
-            "valueName": "current",
-            "valueFontSize": "100%",
-            "format": "none",
-            "thresholds": "1,5",
-            "colorBackground": true,
-            "colorValue": false,
-            "colors": [
-            "#73C586",
-            "#FF9900",
-            "#E02525"
-            ],
-            "sparkline": {
-            "show": true,
-            "full": false,
-            "lineColor": "#FFFFFF",
-            "fillColor": "rgba(255,255,255,0.15)"
-            },
-            "gauge": {
-            "show": false
-            }
+            "repeat": null,
+            "repeatIteration": null,
+            "repeatRowId": null,
+            "showTitle": true,
+            "title": "Local Filters",
+            "titleSize": "h6"
         }
-        ],
-        "repeat": null,
-        "repeatIteration": null,
-        "repeatRowId": null,
-        "showTitle": true,
-        "title": "Guardrail Summary",
-        "titleSize": "h6"
-    },
-    {
-        "collapse": false,
-        "height": "250px",
-        "panels": [
-        {
-            "aliasColors": {
-            "Swearing": "#FF7383",
-            "Non-English": "#8AB8FF",
-            "Jailbreak": "#CA95E5",
-            "Non Lemon": "#FFEE52"
-            },
-            "bars": true,
-            "dashLength": 10,
-            "dashes": false,
-            "datasource": "$datasource",
-            "fill": 10,
-            "id": 5,
-            "legend": {
-            "avg": false,
-            "current": true,
-            "max": true,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": true
-            },
-            "lines": false,
-            "linewidth": 0,
-            "links": [],
-            "nullPointMode": "null as zero",
-            "percentage": false,
-            "pointradius": 5,
-            "points": false,
-            "renderer": "flot",
-            "seriesOverrides": [],
-            "spaceLength": 10,
-            "span": 6,
-            "stack": true,
-            "steppedLine": false,
-            "targets": [
-            {
-                "expr": "sum(guardrail_detections_by_detector{detector=\"hap\"})",
-                "format": "time_series",
-                "legendFormat": "Swearing",
-                "legendLink": null
-            },
-            {
-                "expr": "sum(guardrail_detections_by_detector{detector=\"language_detection\"})",
-                "format": "time_series",
-                "legendFormat": "Non-English",
-                "legendLink": null
-            },
-            {
-                "expr": "sum(guardrail_detections_by_detector{detector=\"prompt_injection\"})",
-                "format": "time_series",
-                "legendFormat": "Jailbreak",
-                "legendLink": null
-            },
-            {
-                "expr": "sum(guardrail_detections_by_detector{detector=\"regex_competitor\"})",
-                "format": "time_series",
-                "legendFormat": "Non Lemon",
-                "legendLink": null
-            }
-            ],
-            "thresholds": [],
-            "timeFrom": null,
-            "timeShift": null,
-            "title": "Detections by Detector",
-            "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-            },
-            "type": "graph",
-            "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-            },
-            "yaxes": [
-            {
-                "format": "short",
-                "label": "Detections",
-                "logBase": 1,
-                "max": null,
-                "min": 0,
-                "show": true
-            },
-            {
-                "format": "short",
-                "label": null,
-                "logBase": 1,
-                "max": null,
-                "min": null,
-                "show": false
-            }
-            ]
-        },
-        {
-            "aliasColors": {
-            "Input Blocked": "#E02525",
-            "Output Blocked": "#FF9900"
-            },
-            "bars": false,
-            "dashLength": 10,
-            "dashes": false,
-            "datasource": "$datasource",
-            "fill": 5,
-            "id": 6,
-            "legend": {
-            "avg": false,
-            "current": true,
-            "max": true,
-            "min": false,
-            "show": true,
-            "total": false,
-            "values": true
-            },
-            "lines": true,
-            "linewidth": 2,
-            "links": [],
-            "nullPointMode": "null as zero",
-            "percentage": false,
-            "pointradius": 5,
-            "points": false,
-            "renderer": "flot",
-            "seriesOverrides": [],
-            "spaceLength": 10,
-            "span": 6,
-            "stack": true,
-            "steppedLine": false,
-            "targets": [
-            {
-                "expr": "sum(guardrail_detections_by_direction{direction=\"input\"})",
-                "format": "time_series",
-                "legendFormat": "Input Blocked",
-                "legendLink": null
-            },
-            {
-                "expr": "sum(guardrail_detections_by_direction{direction=\"output\"})",
-                "format": "time_series",
-                "legendFormat": "Output Blocked",
-                "legendLink": null
-            }
-            ],
-            "thresholds": [],
-            "timeFrom": null,
-            "timeShift": null,
-            "title": "Blocked by Direction",
-            "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-            },
-            "type": "graph",
-            "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-            },
-            "yaxes": [
-            {
-                "format": "short",
-                "label": "Blocked",
-                "logBase": 1,
-                "max": null,
-                "min": 0,
-                "show": true
-            },
-            {
-                "format": "short",
-                "label": null,
-                "logBase": 1,
-                "max": null,
-                "min": null,
-                "show": false
-            }
-            ]
-        }
-        ],
-        "repeat": null,
-        "repeatIteration": null,
-        "repeatRowId": null,
-        "showTitle": true,
-        "title": "Detections",
-        "titleSize": "h6"
-    },
-    {
-        "collapse": false,
-        "height": "250px",
-        "panels": [
-        {
-            "aliasColors": {
-            "Total Requests": "#3B99FC",
-            "Approved": "#73C586",
-            "Blocked": "#E02525"
-            },
-            "bars": false,
-            "dashLength": 10,
-            "dashes": false,
-            "datasource": "$datasource",
-            "fill": 1,
-            "id": 7,
-            "legend": {
-            "avg": false,
-            "current": true,
-            "max": true,
-            "min": true,
-            "show": true,
-            "total": false,
-            "values": true
-            },
-            "lines": true,
-            "linewidth": 2,
-            "links": [],
-            "nullPointMode": "null as zero",
-            "percentage": false,
-            "pointradius": 5,
-            "points": false,
-            "renderer": "flot",
-            "seriesOverrides": [],
-            "spaceLength": 10,
-            "span": 12,
-            "stack": false,
-            "steppedLine": false,
-            "targets": [
-            {
-                "expr": "sum(guardrail_requests_total)",
-                "format": "time_series",
-                "legendFormat": "Total Requests",
-                "legendLink": null
-            },
-            {
-                "expr": "sum(guardrail_requests_total) - sum(guardrail_detections_total)",
-                "format": "time_series",
-                "legendFormat": "Approved",
-                "legendLink": null
-            },
-            {
-                "expr": "sum(guardrail_detections_total)",
-                "format": "time_series",
-                "legendFormat": "Blocked",
-                "legendLink": null
-            }
-            ],
-            "thresholds": [],
-            "timeFrom": null,
-            "timeShift": null,
-            "title": "Request Overview",
-            "tooltip": {
-            "shared": true,
-            "sort": 2,
-            "value_type": "individual"
-            },
-            "type": "graph",
-            "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-            },
-            "yaxes": [
-            {
-                "format": "short",
-                "label": "Requests",
-                "logBase": 1,
-                "max": null,
-                "min": 0,
-                "show": true
-            },
-            {
-                "format": "short",
-                "label": null,
-                "logBase": 1,
-                "max": null,
-                "min": null,
-                "show": false
-            }
-            ]
-        }
-        ],
-        "repeat": null,
-        "repeatIteration": null,
-        "repeatRowId": null,
-        "showTitle": true,
-        "title": "Traffic",
-        "titleSize": "h6"
-    }
     ],
-    "schemaVersion": 14,
+    "schemaVersion": 18,
     "style": "dark",
     "tags": [
-    "lemonade-stand",
-    "guardrails"
+        "lemonade-stand",
+        "guardrails"
     ],
     "templating": {
-    "list": [
-        {
-        "current": {
-            "text": "default",
-            "value": "default"
-        },
-        "hide": 0,
-        "label": "Data source",
-        "name": "datasource",
-        "options": [],
-        "query": "prometheus",
-        "refresh": 1,
-        "regex": "",
-        "type": "datasource"
-        }
-    ]
+        "list": [
+            {
+                "current": {
+                    "selected": true,
+                    "text": "default",
+                    "value": "default"
+                },
+                "hide": 0,
+                "label": "Data source",
+                "name": "datasource",
+                "options": [],
+                "query": "prometheus",
+                "refresh": 1,
+                "regex": "",
+                "type": "datasource"
+            }
+        ]
     },
     "time": {
-    "from": "now-15m",
-    "to": "now"
+        "from": "now-15m",
+        "to": "now"
     },
     "timepicker": {
-    "refresh_intervals": [
-        "5s",
-        "10s",
-        "30s",
-        "1m",
-        "5m",
-        "15m",
-        "30m",
-        "1h"
-    ]
+        "refresh_intervals": ["5s", "10s", "30s", "1m", "5m", "15m", "30m", "1h"]
     },
     "timezone": "browser",
-    "title": "Lemonade Stand Guardrails Metrics",
+    "title": "Lemonade Stand - Guardrails Dashboard",
     "uid": "lemonade-stand-guardrails",
-    "version": 1
+    "version": 2
 }

@@ -795,6 +795,11 @@
                                 if (data.type === 'chunk') {
                                     pendingContent += data.content;
                                     typeNextChar();
+                                } else if (data.type === 'blocked') {
+                                    const metaDiv = document.createElement('div');
+                                    metaDiv.className = 'message-meta';
+                                    metaDiv.textContent = 'Guardrail: ' + (data.detail || 'request blocked before model');
+                                    messagesContainer.appendChild(metaDiv);
                                 } else if (data.type === 'error') {
                                     pendingContent = '';
                                     assistantDiv.textContent = data.message;
@@ -810,9 +815,8 @@
 
                                     const metaDiv = document.createElement('div');
                                     metaDiv.className = 'message-meta';
-                                    const completionTokens = data.completion_tokens || 0;
                                     const modelName = data.model || 'unknown';
-                                    metaDiv.textContent = completionTokens + ' tokens \u00B7 ' + modelName;
+                                    metaDiv.textContent = tokens + ' tokens \u00B7 ' + modelName;
                                     messagesContainer.appendChild(metaDiv);
                                 }
                             } catch (e) {}
@@ -826,6 +830,15 @@
                         if (data.type === 'chunk') {
                             pendingContent += data.content;
                             typeNextChar();
+                        } else if (data.type === 'usage') {
+                            const tokens = data.total_tokens || 0;
+                            totalTokens += tokens;
+                            tokenTotalEl.textContent = 'Tokens: ' + totalTokens;
+                            const metaDiv = document.createElement('div');
+                            metaDiv.className = 'message-meta';
+                            const modelName = data.model || 'unknown';
+                            metaDiv.textContent = tokens + ' tokens \u00B7 ' + modelName;
+                            messagesContainer.appendChild(metaDiv);
                         }
                     } catch (e) {}
                 }

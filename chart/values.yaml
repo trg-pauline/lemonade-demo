@@ -14,7 +14,7 @@ model: {}
 # Option 2: Use MaaS (Model as a Service) proxy
 # Enable this to use an external MaaS endpoint instead of deploying a local model
 maas:
-  enabled: false
+  enabled: true
   # REQUIRED: MaaS endpoint, API key, and model must be set in values-secrets.yaml (gitignored)
   # Copy values-secrets.yaml.example to values-secrets.yaml and set your values
   # These values are intentionally empty - you MUST provide them
@@ -50,5 +50,5 @@ detectors:
 # Enable openshift dashboard
 metrics:
   dashboard:
-    enabled: false # requires cluster-admin privileges to install the dashboard
+    enabled: true # requires cluster-admin privileges to install the dashboard
     odc: false
