@@ -571,6 +571,125 @@
                 height: 48px;
             }
         }
+
+        /* Guardrails Panel */
+        .guardrails-panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-bottom: none;
+            border-radius: 0;
+            padding: 10px 16px;
+            margin-top: -1px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .guardrails-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .guardrails-toggles {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toggle input {
+            display: none;
+        }
+
+        .toggle-slider {
+            width: 40px;
+            height: 22px;
+            background: #D1D5DB;
+            border-radius: 11px;
+            position: relative;
+            transition: background 0.25s ease;
+            flex-shrink: 0;
+        }
+
+        .toggle-slider::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.25s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+
+        .toggle input:checked + .toggle-slider::after {
+            transform: translateX(18px);
+        }
+
+        /* Per-guardrail ON colors */
+        .toggle[data-guardrail="hap"] input:checked + .toggle-slider {
+            background: var(--swearing);
+        }
+        .toggle[data-guardrail="language"] input:checked + .toggle-slider {
+            background: var(--nonenglish);
+        }
+        .toggle[data-guardrail="injection"] input:checked + .toggle-slider {
+            background: var(--jailbreak);
+        }
+        .toggle[data-guardrail="regex"] input:checked + .toggle-slider {
+            background: var(--nonlemon);
+        }
+
+        .toggle-label {
+            font-size: 13px;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* Mobile guardrails */
+        @media (max-width: 768px) {
+            .guardrails-panel {
+                padding: 8px 12px;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .guardrails-toggles {
+                gap: 10px;
+            }
+
+            .toggle-label {
+                font-size: 12px;
+            }
+
+            .toggle-slider {
+                width: 36px;
+                height: 20px;
+                border-radius: 10px;
+            }
+
+            .toggle-slider::after {
+                width: 16px;
+                height: 16px;
+            }
+
+            .toggle input:checked + .toggle-slider::after {
+                transform: translateX(16px);
+            }
+        }
     </style>
 </head>
 <body>
@@ -580,6 +699,32 @@
         <div class="chatbot-label">
             <span style="font-size: 16px;">🍋</span>
             ChatLemon
+        </div>
+
+        <div class="guardrails-panel">
+            <div class="guardrails-title">Guardrails</div>
+            <div class="guardrails-toggles">
+                <label class="toggle" data-guardrail="hap">
+                    <input type="checkbox" id="toggle-hap" checked>
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">HAP</span>
+                </label>
+                <label class="toggle" data-guardrail="language">
+                    <input type="checkbox" id="toggle-language" checked>
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">Language</span>
+                </label>
+                <label class="toggle" data-guardrail="injection">
+                    <input type="checkbox" id="toggle-injection" checked>
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">Jailbreak</span>
+                </label>
+                <label class="toggle" data-guardrail="regex">
+                    <input type="checkbox" id="toggle-regex" checked>
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">Non-Lemon</span>
+                </label>
+            </div>
         </div>
 
         <div class="chat-container">
@@ -765,10 +910,17 @@
             }
 
             try {
+                const guardrails = {
+                    hap: document.getElementById('toggle-hap').checked,
+                    language: document.getElementById('toggle-language').checked,
+                    injection: document.getElementById('toggle-injection').checked,
+                    regex: document.getElementById('toggle-regex').checked
+                };
+
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message }),
+                    body: JSON.stringify({ message, guardrails }),
                     signal: abortController.signal
                 });
 
