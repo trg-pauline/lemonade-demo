@@ -133,17 +133,17 @@ def check_regex_locally(text: str) -> bool:
 # User-friendly messages for each detector type (differentiated by input/output)
 DETECTOR_MESSAGES = {
     # HAP (Hate, Abuse, Profanity)
-    "hap_input": "🤬 Your message was flagged for containing potentially harmful or inappropriate content.",
-    "hap_output": "🤬 The response was blocked for containing potentially harmful or inappropriate content.",
+    "hap_input": "🛑 Your message was flagged for harmful content by Granite Guardian HAP detector.",
+    "hap_output": "🛑 The response was blocked for harmful content by Granite Guardian HAP detector.",
     # Prompt injection (typically only on input)
-    "prompt_injection_input": "👮 Your message appears to contain instructions that try to override the system rules.",
-    "prompt_injection_output": "👮 The response was blocked for containing suspicious instructions.",
+    "prompt_injection_input": "🛡️ Prompt injection detected by DeBERTa v3 detector. Your message appears to contain instructions that try to override the system rules.",
+    "prompt_injection_output": "🛡️ The response was blocked for containing suspicious instructions (DeBERTa v3 detector).",
     # Regex competitor (fruit/topic detection)
-    "regex_competitor_input": "🍏 I can only discuss lemons! Other fruits and off-topic subjects are not allowed.",
-    "regex_competitor_output": "🍏 Oops! I almost talked about other fruits. Let's stick to lemons!",
+    "regex_competitor_input": "🍋 I can only discuss lemons! Other fruits and off-topic subjects are not allowed.",
+    "regex_competitor_output": "🍋 Oops! I almost talked about other fruits. Let's stick to lemons!",
     # Language detection
-    "language_detection_input": "🇬🇧 I can only communicate in English. Please rephrase your message in English.",
-    "language_detection_output": "🇬🇧 Oops! I almost answered in non-English. Let's stick to English!",
+    "language_detection_input": "🌐 Non-English language blocked by Lingua detector. Please rephrase your message in English.",
+    "language_detection_output": "🌐 The response was blocked for non-English content (Lingua detector).",
 }
 
 # =============================================================================
@@ -305,15 +305,23 @@ app = FastAPI(
 # Request/Response Models
 # =============================================================================
 
+class GuardrailsConfig(BaseModel):
+    hap: bool = True
+    language: bool = True
+    injection: bool = True
+    regex: bool = True
+
+
 class ChatRequest(BaseModel):
     message: str
+    guardrails: GuardrailsConfig = GuardrailsConfig()
 
 
 # =============================================================================
 # Core Chat Logic with aiohttp SSE Streaming
 # =============================================================================
 
-async def process_chat(message: str) -> AsyncGenerator[dict, None]:
+async def process_chat(message: str, guardrails: GuardrailsConfig = GuardrailsConfig()) -> AsyncGenerator[dict, None]:
     """Process chat message and yield SSE events using aiohttp."""
 
     logger.debug("===== New chat request =====")
@@ -332,27 +340,43 @@ async def process_chat(message: str) -> AsyncGenerator[dict, None]:
 
     # LOCAL REGEX CHECK: Pre-filter before sending to orchestrator
     # This reduces load on the orchestrator by catching obvious violations locally
-    logger.debug("Checking local regex patterns...")
-    if check_regex_locally(message):
-        # Find which pattern matched for logging
-        for i, pattern in enumerate(COMPILED_REGEX_PATTERNS):
-            match = pattern.search(message)
-            if match:
-                logger.debug(f"Local regex BLOCKED - pattern #{i} matched: {repr(match.group())}")
-                logger.debug(f"Pattern: {ALL_REGEX_PATTERNS[i][:100]}...")
-                break
-        await metrics.increment_local_regex_block()
-        yield {
-            "type": "error",
-            "message": DETECTOR_MESSAGES["regex_competitor_input"] + " Is there anything else I can help you with?",
-            "detector_type": "regex"
-        }
-        return
-    logger.debug("Local regex check passed")
+    if guardrails.regex:
+        logger.debug("Checking local regex patterns...")
+        if check_regex_locally(message):
+            # Find which pattern matched for logging
+            for i, pattern in enumerate(COMPILED_REGEX_PATTERNS):
+                match = pattern.search(message)
+                if match:
+                    logger.debug(f"Local regex BLOCKED - pattern #{i} matched: {repr(match.group())}")
+                    logger.debug(f"Pattern: {ALL_REGEX_PATTERNS[i][:100]}...")
+                    break
+            await metrics.increment_local_regex_block()
+            yield {"type": "blocked", "detail": "Off-topic content detected (regex)"}
+            yield {
+                "type": "error",
+                "message": DETECTOR_MESSAGES["regex_competitor_input"] + " Is there anything else I can help you with?",
+                "detector_type": "regex"
+            }
+            return
+        logger.debug("Local regex check passed")
+    else:
+        logger.debug("Regex guardrail disabled, skipping local regex check")
 
-    # Build request payload - regex already checked locally, so only send to orchestrator
-    # for HAP, prompt injection, and language detection
-    # Note: We still include regex_competitor for OUTPUT detection (LLM responses)
+    # Build request payload with detectors based on guardrails config
+    input_detectors = {}
+    output_detectors = {}
+
+    if guardrails.hap:
+        input_detectors["hap"] = {}
+        output_detectors["hap"] = {}
+    if guardrails.language:
+        input_detectors["language_detection"] = {}
+        output_detectors["language_detection"] = {}
+    if guardrails.injection:
+        input_detectors["prompt_injection"] = {}
+    if guardrails.regex:
+        output_detectors["regex_competitor"] = {"regex": ALL_REGEX_PATTERNS}
+
     payload = {
         "model": VLLM_MODEL,
         "messages": [
@@ -363,18 +387,8 @@ async def process_chat(message: str) -> AsyncGenerator[dict, None]:
         "max_tokens": 200,
         "temperature": 0,
         "detectors": {
-            "input": {
-                "hap": {},
-                "language_detection": {},
-                "prompt_injection": {}
-            },
-            "output": {
-                "hap": {},
-                "regex_competitor": {
-                    "regex": ALL_REGEX_PATTERNS
-                },
-                "language_detection": {}
-            }
+            "input": input_detectors,
+            "output": output_detectors
         }
     }
 
@@ -382,24 +396,32 @@ async def process_chat(message: str) -> AsyncGenerator[dict, None]:
     if VLLM_API_KEY:
         headers["Authorization"] = f"Bearer {VLLM_API_KEY}"
 
-    async def parse_sse_line(line: str) -> tuple[str | None, bool, str | None, str | None, str | None]:
+    async def parse_sse_line(line: str) -> tuple[str | None, bool, str | None, str | None, str | None, dict | None, str | None]:
         """
-        Parse an SSE line and return (content, should_block, block_message, detector_type, finish_reason).
-        Returns (None, False, None, None, None) for non-content lines.
+        Parse an SSE line and return (content, should_block, block_message, detector_type, finish_reason, usage, model).
+        Returns (None, False, None, None, None, None, None) for non-content lines.
         """
         line = line.strip()
         if not line or line == "data: [DONE]" or not line.startswith("data: "):
-            return None, False, None, None, None
+            return None, False, None, None, None, None, None
 
         try:
             chunk_data = json.loads(line[6:])
         except json.JSONDecodeError:
             logger.debug(f"Failed to parse SSE line: {line[:200]}")
-            return None, False, None, None, None
+            return None, False, None, None, None, None, None
 
         warnings_list = chunk_data.get("warnings", [])
         detections = chunk_data.get("detections", {})
         choices = chunk_data.get("choices", [])
+        usage = chunk_data.get("usage")
+        model = chunk_data.get("model")
+
+        # Log usage/model when present for debugging
+        if usage:
+            logger.info(f"SSE chunk usage data: {usage}")
+        if model:
+            logger.debug(f"SSE chunk model: {model}")
 
         # Process detections for metrics
         for det in detections.get("input", []):
@@ -450,7 +472,7 @@ async def process_chat(message: str) -> AsyncGenerator[dict, None]:
                 detector_class = "hap"
             else:
                 detector_class = "error"
-            return None, True, block_msg, detector_class, None
+            return None, True, block_msg, detector_class, None, usage, model
 
         # Extract content and finish_reason
         finish_reason = None
@@ -460,9 +482,9 @@ async def process_chat(message: str) -> AsyncGenerator[dict, None]:
             delta = choice.get("delta", {})
             content = delta.get("content", "")
             if content:
-                return content, False, None, None, finish_reason
+                return content, False, None, None, finish_reason, usage, model
 
-        return None, False, None, None, finish_reason
+        return None, False, None, None, finish_reason, usage, model
 
     max_retries = 2
     base_delay = 0.1  # 100ms initial delay, doubles each retry
@@ -483,6 +505,8 @@ async def process_chat(message: str) -> AsyncGenerator[dict, None]:
                 total_bytes = 0
                 chunk_count = 0
                 last_finish_reason = None
+                last_usage = None
+                last_model = None
 
                 # Process SSE stream in real-time using readline for better SSE handling
                 while True:
@@ -500,9 +524,23 @@ async def process_chat(message: str) -> AsyncGenerator[dict, None]:
                     # Process complete lines
                     while "\n" in buffer:
                         line, buffer = buffer.split("\n", 1)
-                        content, should_block, block_msg, detector_type, finish_reason = await parse_sse_line(line)
+                        content, should_block, block_msg, detector_type, finish_reason, chunk_usage, chunk_model = await parse_sse_line(line)
+
+                        # Accumulate usage and model (last non-null wins)
+                        if chunk_usage:
+                            last_usage = chunk_usage
+                        if chunk_model:
+                            last_model = chunk_model
 
                         if should_block:
+                            detail_map = {
+                                "hap": "Harmful content detected (Granite Guardian HAP)",
+                                "language": "Non-English language blocked (Lingua)",
+                                "prompt-injection": "Prompt injection detected (DeBERTa v3)",
+                                "regex": "Off-topic content detected (regex)",
+                            }
+                            detail = detail_map.get(detector_type, "Content blocked")
+                            yield {"type": "blocked", "detail": detail}
                             yield {"type": "error", "message": block_msg, "detector_type": detector_type}
                             return
 
@@ -520,9 +558,6 @@ async def process_chat(message: str) -> AsyncGenerator[dict, None]:
 
                             full_response += content
                             yield {"type": "chunk", "content": content}
-                            # Add newline after each chunk for markdown formatting
-                            full_response += "\n"
-                            yield {"type": "chunk", "content": "\n"}
 
                 if full_response:
                     logger.debug("Stream completed successfully")
@@ -535,7 +570,25 @@ async def process_chat(message: str) -> AsyncGenerator[dict, None]:
                         yield {"type": "chunk", "content": truncation_msg}
                         logger.debug("Response truncated (finish_reason=length), appended truncation message")
 
+                    # Emit usage metadata before done
+                    usage_event = {"type": "usage"}
+                    usage_event["model"] = last_model or VLLM_MODEL
+                    if last_usage:
+                        usage_event["prompt_tokens"] = last_usage.get("prompt_tokens", 0)
+                        usage_event["completion_tokens"] = last_usage.get("completion_tokens", 0)
+                        usage_event["total_tokens"] = last_usage.get("total_tokens", 0)
+                    else:
+                        # Estimate tokens when orchestrator doesn't forward usage
+                        # Rough approximation: ~4 chars per token (English text)
+                        est_prompt = len(message) // 4 + 1
+                        est_completion = len(full_response.strip()) // 4 + 1
+                        usage_event["prompt_tokens"] = est_prompt
+                        usage_event["completion_tokens"] = est_completion
+                        usage_event["total_tokens"] = est_prompt + est_completion
+                    yield usage_event
+
                     yield {"type": "done"}
+
                     return
 
                 # Empty response - likely stale connection, retry immediately
@@ -575,7 +628,7 @@ async def chat(request: ChatRequest):
     """SSE streaming chat endpoint with real-time streaming."""
 
     async def generate():
-        async for event in process_chat(request.message):
+        async for event in process_chat(request.message, request.guardrails):
             yield f"data: {json.dumps(event)}\n\n"
 
     return StreamingResponse(

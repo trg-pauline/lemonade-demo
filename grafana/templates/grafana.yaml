@@ -257,669 +257,287 @@ spec:
   json: |-
     {
       "annotations": {
-        "list": [
-          {
-            "builtIn": 1,
-            "datasource": {
-              "type": "grafana",
-              "uid": "-- Grafana --"
-            },
-            "enable": true,
-            "hide": true,
-            "iconColor": "rgba(0, 211, 255, 1)",
-            "name": "Annotations & Alerts",
-            "type": "dashboard"
-          }
-        ]
+        "list": []
       },
       "editable": true,
       "fiscalYearStartMonth": 0,
-      "graphTooltip": 0,
+      "graphTooltip": 1,
       "id": 0,
       "links": [],
       "panels": [
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
           "fieldConfig": {
             "defaults": {
-              "color": {
-                "fixedColor": "yellow",
-                "mode": "palette-classic"
-              },
+              "color": { "fixedColor": "#3B82F6", "mode": "fixed" },
               "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "#90cae5",
-                    "value": 0
-                  }
-                ]
-              }
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "#3B82F6", "value": null }] }
             },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "hap"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "🤬Swearing"
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "#FF7383",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "language_detection"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "🇬🇧Non-English"
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "#8AB8FF",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "prompt_injection"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "👮Jailbreak"
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "#CA95E5",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "regex_competitor"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "🍏Non Lemon"
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "#FFEE52",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              }
-            ]
+            "overrides": []
           },
-          "gridPos": {
-            "h": 10,
-            "w": 24,
-            "x": 0,
-            "y": 0
+          "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 },
+          "id": 1,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
           },
+          "pluginVersion": "12.3.0",
+          "targets": [{ "editorMode": "code", "expr": "round(sum(increase(guardrail_requests_total[$__range])))", "legendFormat": "Total Requests", "range": true, "refId": "A" }],
+          "title": "Total Requests",
+          "type": "stat"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "fixedColor": "#16A34A", "mode": "fixed" },
+              "mappings": [],
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "#16A34A", "value": null }] }
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 6, "w": 6, "x": 6, "y": 0 },
+          "id": 2,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "12.3.0",
+          "targets": [{ "editorMode": "code", "expr": "round(sum(increase(guardrail_requests_total[$__range]))) - round(sum(increase(guardrail_detections_total[$__range])))", "legendFormat": "Approved", "range": true, "refId": "A" }],
+          "title": "Approved",
+          "type": "stat"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "fixedColor": "#DC2626", "mode": "fixed" },
+              "mappings": [],
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "#DC2626", "value": null }] }
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 6, "w": 6, "x": 12, "y": 0 },
+          "id": 3,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "12.3.0",
+          "targets": [{ "editorMode": "code", "expr": "round(sum(increase(guardrail_detections_by_direction{direction=\"input\"}[$__range])))", "legendFormat": "Input Blocked", "range": true, "refId": "A" }],
+          "title": "Input Blocked",
+          "type": "stat"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "fixedColor": "#F97316", "mode": "fixed" },
+              "mappings": [],
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "#F97316", "value": null }] }
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 6, "w": 6, "x": 18, "y": 0 },
           "id": 4,
           "options": {
-            "displayMode": "gradient",
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": false
+            "colorMode": "background",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "12.3.0",
+          "targets": [{ "editorMode": "code", "expr": "round(sum(increase(guardrail_detections_by_direction{direction=\"output\"}[$__range])))", "legendFormat": "Output Blocked", "range": true, "refId": "A" }],
+          "title": "Output Blocked",
+          "type": "stat"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "mappings": [],
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
             },
+            "overrides": [
+              { "matcher": { "id": "byName", "options": "hap" }, "properties": [{ "id": "displayName", "value": "Swearing (HAP)" }, { "id": "color", "value": { "fixedColor": "#EF4444", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "language_detection" }, "properties": [{ "id": "displayName", "value": "Non-English" }, { "id": "color", "value": { "fixedColor": "#3B82F6", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "prompt_injection" }, "properties": [{ "id": "displayName", "value": "Jailbreak" }, { "id": "color", "value": { "fixedColor": "#8B5CF6", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "regex_competitor" }, "properties": [{ "id": "displayName", "value": "Non-Lemon" }, { "id": "color", "value": { "fixedColor": "#FACC15", "mode": "fixed" } }] }
+            ]
+          },
+          "gridPos": { "h": 9, "w": 14, "x": 0, "y": 6 },
+          "id": 5,
+          "options": {
+            "displayMode": "gradient",
+            "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true },
             "maxVizHeight": 300,
             "minVizHeight": 16,
             "minVizWidth": 8,
             "namePlacement": "left",
             "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showUnfilled": false,
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "showUnfilled": true,
             "sizing": "auto",
             "valueMode": "color"
           },
           "pluginVersion": "12.3.0",
-          "targets": [
-            {
-              "editorMode": "code",
-              "expr": "sum by (detector) (guardrail_detections_by_detector)",
-              "legendFormat": "__auto",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "",
+          "targets": [{ "editorMode": "code", "expr": "round(sum by (detector) (increase(guardrail_detections_by_detector[$__range])))", "legendFormat": "__auto", "range": true, "refId": "A" }],
+          "title": "Detections by Type",
           "type": "bargauge"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
           "fieldConfig": {
             "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
+              "color": { "mode": "palette-classic" },
               "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": 0
-                  }
-                ]
-              }
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
             },
             "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(guardrail_requests_total)"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Total Requests"
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "dark-blue",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(guardrail_requests_total) - sum(guardrail_detections_total)"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Approved Requests"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(guardrail_detections_by_direction{direction=\"input\"})"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Input Blocked"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(guardrail_detections_by_direction{direction=\"output\"})"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Output Blocked"
-                  }
-                ]
-              }
+              { "matcher": { "id": "byName", "options": "Approved" }, "properties": [{ "id": "color", "value": { "fixedColor": "#16A34A", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "Blocked" }, "properties": [{ "id": "color", "value": { "fixedColor": "#DC2626", "mode": "fixed" } }] }
             ]
           },
-          "gridPos": {
-            "h": 10,
-            "w": 6,
-            "x": 0,
-            "y": 10
-          },
-          "id": 1,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "vertical",
-            "percentChangeColorMode": "standard",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showPercentChange": false,
-            "text": {},
-            "textMode": "auto",
-            "wideLayout": true
-          },
-          "pluginVersion": "12.3.0",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "$datasource"
-              },
-              "editorMode": "code",
-              "expr": "sum(guardrail_requests_total)",
-              "legendFormat": "__auto",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "",
-          "type": "stat"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": 0
-                  }
-                ]
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(guardrail_requests_total)"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Total Requests"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(guardrail_requests_total) - sum(guardrail_detections_total)"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Approved Requests"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(guardrail_detections_by_direction{direction=\"input\"})"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Input Blocked"
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "#e0172f",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(guardrail_detections_by_direction{direction=\"output\"})"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Output Blocked"
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 6,
-            "x": 6,
-            "y": 10
-          },
-          "id": 5,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "vertical",
-            "percentChangeColorMode": "standard",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showPercentChange": false,
-            "text": {},
-            "textMode": "auto",
-            "wideLayout": true
-          },
-          "pluginVersion": "12.3.0",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "$datasource"
-              },
-              "editorMode": "code",
-              "expr": "sum(guardrail_detections_by_direction{direction=\"input\"})",
-              "legendFormat": "__auto",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "",
-          "type": "stat"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": 0
-                  }
-                ]
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(guardrail_requests_total)"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Total Requests"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(guardrail_requests_total) - sum(guardrail_detections_total)"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Approved Requests"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(guardrail_detections_by_direction{direction=\"output\"})\n"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Input Blocked"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(guardrail_detections_by_direction{direction=\"output\"})"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Answers Blocked"
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "#e0172f",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 6,
-            "x": 12,
-            "y": 10
-          },
+          "gridPos": { "h": 9, "w": 10, "x": 14, "y": 6 },
           "id": 6,
           "options": {
-            "colorMode": "value",
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "vertical",
-            "percentChangeColorMode": "standard",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showPercentChange": false,
-            "text": {},
-            "textMode": "auto",
-            "wideLayout": true
+            "displayLabels": ["percent", "name"],
+            "legend": { "calcs": ["lastNotNull"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+            "pieType": "donut",
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+            "tooltip": { "mode": "single", "sort": "none" }
           },
           "pluginVersion": "12.3.0",
           "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "$datasource"
-              },
-              "editorMode": "code",
-              "expr": "sum(guardrail_detections_by_direction{direction=\"output\"})",
-              "legendFormat": "__auto",
-              "range": true,
-              "refId": "A"
-            }
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_requests_total[$__range]))) - round(sum(increase(guardrail_detections_total[$__range])))", "legendFormat": "Approved", "range": true, "refId": "A" },
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_detections_total[$__range])))", "legendFormat": "Blocked", "range": true, "refId": "B" }
           ],
-          "title": "",
-          "type": "stat"
+          "title": "Block Rate",
+          "type": "piechart"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
           "fieldConfig": {
             "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
+              "color": { "mode": "palette-classic" },
+              "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisLabel": "", "fillOpacity": 10, "gradientMode": "scheme", "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "none" } },
               "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": 0
-                  }
-                ]
-              }
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
+              "unit": "short"
             },
             "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(guardrail_requests_total)"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Total Requests"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(guardrail_requests_total) - sum(guardrail_detections_total)"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Approved Requests"
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "dark-green",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(guardrail_detections_by_direction{direction=\"output\"})\n"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Input Blocked"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "sum(guardrail_detections_by_direction{direction=\"output\"})"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Output Blocked"
-                  }
-                ]
-              }
+              { "matcher": { "id": "byName", "options": "Total Requests" }, "properties": [{ "id": "color", "value": { "fixedColor": "#3B82F6", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "Blocked" }, "properties": [{ "id": "color", "value": { "fixedColor": "#DC2626", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "Approved" }, "properties": [{ "id": "color", "value": { "fixedColor": "#16A34A", "mode": "fixed" } }] }
             ]
           },
-          "gridPos": {
-            "h": 10,
-            "w": 6,
-            "x": 18,
-            "y": 10
-          },
+          "gridPos": { "h": 9, "w": 12, "x": 0, "y": 15 },
           "id": 7,
           "options": {
-            "colorMode": "value",
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "vertical",
-            "percentChangeColorMode": "standard",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
+            "legend": { "calcs": ["lastNotNull", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+            "tooltip": { "mode": "multi", "sort": "desc" }
+          },
+          "pluginVersion": "12.3.0",
+          "targets": [
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_requests_total[$__rate_interval])))", "legendFormat": "Total Requests", "range": true, "refId": "A" },
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_requests_total[$__rate_interval]))) - round(sum(increase(guardrail_detections_total[$__rate_interval])))", "legendFormat": "Approved", "range": true, "refId": "B" },
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_detections_total[$__rate_interval])))", "legendFormat": "Blocked", "range": true, "refId": "C" }
+          ],
+          "title": "Request Traffic",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "axisBorderShow": false, "axisCenteredZero": false, "axisLabel": "", "fillOpacity": 30, "gradientMode": "opacity", "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": true, "stacking": { "group": "A", "mode": "normal" } },
+              "mappings": [],
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
+              "unit": "short"
             },
+            "overrides": [
+              { "matcher": { "id": "byName", "options": "Swearing (HAP)" }, "properties": [{ "id": "color", "value": { "fixedColor": "#EF4444", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "Non-English" }, "properties": [{ "id": "color", "value": { "fixedColor": "#3B82F6", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "Jailbreak" }, "properties": [{ "id": "color", "value": { "fixedColor": "#8B5CF6", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "Non-Lemon" }, "properties": [{ "id": "color", "value": { "fixedColor": "#FACC15", "mode": "fixed" } }] }
+            ]
+          },
+          "gridPos": { "h": 9, "w": 12, "x": 12, "y": 15 },
+          "id": 8,
+          "options": {
+            "legend": { "calcs": ["lastNotNull", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+            "tooltip": { "mode": "multi", "sort": "desc" }
+          },
+          "pluginVersion": "12.3.0",
+          "targets": [
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_detections_by_detector{detector=\"hap\"}[$__rate_interval])))", "legendFormat": "Swearing (HAP)", "range": true, "refId": "A" },
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_detections_by_detector{detector=\"language_detection\"}[$__rate_interval])))", "legendFormat": "Non-English", "range": true, "refId": "B" },
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_detections_by_detector{detector=\"prompt_injection\"}[$__rate_interval])))", "legendFormat": "Jailbreak", "range": true, "refId": "C" },
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_detections_by_detector{detector=\"regex_competitor\"}[$__rate_interval])))", "legendFormat": "Non-Lemon", "range": true, "refId": "D" }
+          ],
+          "title": "Detections over Time",
+          "type": "timeseries"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "fixedColor": "#06B6D4", "mode": "fixed" },
+              "mappings": [],
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "#06B6D4", "value": null }] }
+            },
+            "overrides": []
+          },
+          "gridPos": { "h": 4, "w": 24, "x": 0, "y": 24 },
+          "id": 9,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
             "showPercentChange": false,
-            "text": {},
             "textMode": "auto",
             "wideLayout": true
           },
           "pluginVersion": "12.3.0",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "$datasource"
-              },
-              "editorMode": "code",
-              "expr": "sum(guardrail_requests_total) - sum(guardrail_detections_total)",
-              "legendFormat": "__auto",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "",
+          "targets": [{ "editorMode": "code", "expr": "round(sum(increase(guardrail_local_regex_blocks_total[$__range])))", "legendFormat": "Local Regex Blocks", "range": true, "refId": "A" }],
+          "title": "Local Regex Blocks (pre-orchestrator)",
           "type": "stat"
         }
       ],
       "preload": false,
       "refresh": "5s",
       "schemaVersion": 42,
-      "tags": [],
+      "tags": ["lemonade-stand", "guardrails"],
       "templating": {
         "list": [
           {
-            "current": {
-              "selected": false,
-              "text": "Prometheus",
-              "value": "Prometheus"
-            },
+            "current": { "selected": false, "text": "Prometheus", "value": "Prometheus" },
             "hide": 2,
             "includeAll": false,
             "multi": false,
@@ -933,13 +551,10 @@ spec:
           }
         ]
       },
-      "time": {
-        "from": "now-15m",
-        "to": "now"
-      },
+      "time": { "from": "now-15m", "to": "now" },
       "timepicker": {},
       "timezone": "browser",
-      "title": "Lemonade Stand Guardrails Metrics",
+      "title": "Lemonade Stand - Guardrails Dashboard",
       "uid": "34d7e0c2-afeb-4939-bbf9-c9b0ad33595c",
-      "version": 2
+      "version": 3
     }

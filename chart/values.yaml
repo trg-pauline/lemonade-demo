@@ -1,4 +1,8 @@
 ---
+# Application image
+app:
+  image: "quay.io/mouachan/lemonade-chatbot:1.0"
+
 # LLM configuration
 # Option 1: Use local model (requires GPU)
 # If model is empty and maas is disabled, Llama 3.2 will be deployed locally
@@ -10,7 +14,7 @@ model: {}
 # Option 2: Use MaaS (Model as a Service) proxy
 # Enable this to use an external MaaS endpoint instead of deploying a local model
 maas:
-  enabled: false
+  enabled: true
   # REQUIRED: MaaS endpoint, API key, and model must be set in values-secrets.yaml (gitignored)
   # Copy values-secrets.yaml.example to values-secrets.yaml and set your values
   # These values are intentionally empty - you MUST provide them
@@ -46,5 +50,5 @@ detectors:
 # Enable openshift dashboard
 metrics:
   dashboard:
-    enabled: false # requires cluster-admin privileges to install the dashboard
+    enabled: true # requires cluster-admin privileges to install the dashboard
     odc: false

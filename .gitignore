@@ -1,1 +1,4 @@
 chart/values-secrets.yaml
+chart/values-mouachan.yaml
+.DS_Store
+grafana-dashboard-pauline.yaml
