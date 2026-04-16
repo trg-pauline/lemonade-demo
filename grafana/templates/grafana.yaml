@@ -288,7 +288,7 @@ spec:
             "wideLayout": true
           },
           "pluginVersion": "12.3.0",
-          "targets": [{ "editorMode": "code", "expr": "sum(guardrail_requests_total)", "legendFormat": "Total Requests", "range": true, "refId": "A" }],
+          "targets": [{ "editorMode": "code", "expr": "round(sum(increase(guardrail_requests_total[$__range])))", "legendFormat": "Total Requests", "range": true, "refId": "A" }],
           "title": "Total Requests",
           "type": "stat"
         },
@@ -315,7 +315,7 @@ spec:
             "wideLayout": true
           },
           "pluginVersion": "12.3.0",
-          "targets": [{ "editorMode": "code", "expr": "sum(guardrail_requests_total) - sum(guardrail_detections_total)", "legendFormat": "Approved", "range": true, "refId": "A" }],
+          "targets": [{ "editorMode": "code", "expr": "round(sum(increase(guardrail_requests_total[$__range]))) - round(sum(increase(guardrail_detections_total[$__range])))", "legendFormat": "Approved", "range": true, "refId": "A" }],
           "title": "Approved",
           "type": "stat"
         },
@@ -342,7 +342,7 @@ spec:
             "wideLayout": true
           },
           "pluginVersion": "12.3.0",
-          "targets": [{ "editorMode": "code", "expr": "sum(guardrail_detections_by_direction{direction=\"input\"})", "legendFormat": "Input Blocked", "range": true, "refId": "A" }],
+          "targets": [{ "editorMode": "code", "expr": "round(sum(increase(guardrail_detections_by_direction{direction=\"input\"}[$__range])))", "legendFormat": "Input Blocked", "range": true, "refId": "A" }],
           "title": "Input Blocked",
           "type": "stat"
         },
@@ -369,7 +369,7 @@ spec:
             "wideLayout": true
           },
           "pluginVersion": "12.3.0",
-          "targets": [{ "editorMode": "code", "expr": "sum(guardrail_detections_by_direction{direction=\"output\"})", "legendFormat": "Output Blocked", "range": true, "refId": "A" }],
+          "targets": [{ "editorMode": "code", "expr": "round(sum(increase(guardrail_detections_by_direction{direction=\"output\"}[$__range])))", "legendFormat": "Output Blocked", "range": true, "refId": "A" }],
           "title": "Output Blocked",
           "type": "stat"
         },
@@ -404,7 +404,7 @@ spec:
             "valueMode": "color"
           },
           "pluginVersion": "12.3.0",
-          "targets": [{ "editorMode": "code", "expr": "sum by (detector) (guardrail_detections_by_detector)", "legendFormat": "__auto", "range": true, "refId": "A" }],
+          "targets": [{ "editorMode": "code", "expr": "round(sum by (detector) (increase(guardrail_detections_by_detector[$__range])))", "legendFormat": "__auto", "range": true, "refId": "A" }],
           "title": "Detections by Type",
           "type": "bargauge"
         },
@@ -432,8 +432,8 @@ spec:
           },
           "pluginVersion": "12.3.0",
           "targets": [
-            { "editorMode": "code", "expr": "sum(guardrail_requests_total) - sum(guardrail_detections_total)", "legendFormat": "Approved", "range": true, "refId": "A" },
-            { "editorMode": "code", "expr": "sum(guardrail_detections_total)", "legendFormat": "Blocked", "range": true, "refId": "B" }
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_requests_total[$__range]))) - round(sum(increase(guardrail_detections_total[$__range])))", "legendFormat": "Approved", "range": true, "refId": "A" },
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_detections_total[$__range])))", "legendFormat": "Blocked", "range": true, "refId": "B" }
           ],
           "title": "Block Rate",
           "type": "piechart"
@@ -462,9 +462,9 @@ spec:
           },
           "pluginVersion": "12.3.0",
           "targets": [
-            { "editorMode": "code", "expr": "sum(guardrail_requests_total)", "legendFormat": "Total Requests", "range": true, "refId": "A" },
-            { "editorMode": "code", "expr": "sum(guardrail_requests_total) - sum(guardrail_detections_total)", "legendFormat": "Approved", "range": true, "refId": "B" },
-            { "editorMode": "code", "expr": "sum(guardrail_detections_total)", "legendFormat": "Blocked", "range": true, "refId": "C" }
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_requests_total[$__rate_interval])))", "legendFormat": "Total Requests", "range": true, "refId": "A" },
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_requests_total[$__rate_interval]))) - round(sum(increase(guardrail_detections_total[$__rate_interval])))", "legendFormat": "Approved", "range": true, "refId": "B" },
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_detections_total[$__rate_interval])))", "legendFormat": "Blocked", "range": true, "refId": "C" }
           ],
           "title": "Request Traffic",
           "type": "timeseries"
@@ -494,10 +494,10 @@ spec:
           },
           "pluginVersion": "12.3.0",
           "targets": [
-            { "editorMode": "code", "expr": "sum(guardrail_detections_by_detector{detector=\"hap\"})", "legendFormat": "Swearing (HAP)", "range": true, "refId": "A" },
-            { "editorMode": "code", "expr": "sum(guardrail_detections_by_detector{detector=\"language_detection\"})", "legendFormat": "Non-English", "range": true, "refId": "B" },
-            { "editorMode": "code", "expr": "sum(guardrail_detections_by_detector{detector=\"prompt_injection\"})", "legendFormat": "Jailbreak", "range": true, "refId": "C" },
-            { "editorMode": "code", "expr": "sum(guardrail_detections_by_detector{detector=\"regex_competitor\"})", "legendFormat": "Non-Lemon", "range": true, "refId": "D" }
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_detections_by_detector{detector=\"hap\"}[$__rate_interval])))", "legendFormat": "Swearing (HAP)", "range": true, "refId": "A" },
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_detections_by_detector{detector=\"language_detection\"}[$__rate_interval])))", "legendFormat": "Non-English", "range": true, "refId": "B" },
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_detections_by_detector{detector=\"prompt_injection\"}[$__rate_interval])))", "legendFormat": "Jailbreak", "range": true, "refId": "C" },
+            { "editorMode": "code", "expr": "round(sum(increase(guardrail_detections_by_detector{detector=\"regex_competitor\"}[$__rate_interval])))", "legendFormat": "Non-Lemon", "range": true, "refId": "D" }
           ],
           "title": "Detections over Time",
           "type": "timeseries"
@@ -525,7 +525,7 @@ spec:
             "wideLayout": true
           },
           "pluginVersion": "12.3.0",
-          "targets": [{ "editorMode": "code", "expr": "sum(guardrail_local_regex_blocks_total)", "legendFormat": "Local Regex Blocks", "range": true, "refId": "A" }],
+          "targets": [{ "editorMode": "code", "expr": "round(sum(increase(guardrail_local_regex_blocks_total[$__range])))", "legendFormat": "Local Regex Blocks", "range": true, "refId": "A" }],
           "title": "Local Regex Blocks (pre-orchestrator)",
           "type": "stat"
         }

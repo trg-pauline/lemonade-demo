@@ -22,7 +22,7 @@
                     "span": 3,
                     "targets": [
                         {
-                            "expr": "sum(guardrail_requests_total)",
+                            "expr": "round(sum(increase(guardrail_requests_total[$__range])))",
                             "format": "time_series",
                             "legendFormat": "",
                             "legendLink": null
@@ -51,7 +51,7 @@
                     "span": 3,
                     "targets": [
                         {
-                            "expr": "sum(guardrail_requests_total) - sum(guardrail_detections_total)",
+                            "expr": "round(sum(increase(guardrail_requests_total[$__range]))) - round(sum(increase(guardrail_detections_total[$__range])))",
                             "format": "time_series",
                             "legendFormat": "",
                             "legendLink": null
@@ -80,7 +80,7 @@
                     "span": 3,
                     "targets": [
                         {
-                            "expr": "sum(guardrail_detections_by_direction{direction=\"input\"})",
+                            "expr": "round(sum(increase(guardrail_detections_by_direction{direction=\"input\"}[$__range])))",
                             "format": "time_series",
                             "legendFormat": "",
                             "legendLink": null
@@ -109,7 +109,7 @@
                     "span": 3,
                     "targets": [
                         {
-                            "expr": "sum(guardrail_detections_by_direction{direction=\"output\"})",
+                            "expr": "round(sum(increase(guardrail_detections_by_direction{direction=\"output\"}[$__range])))",
                             "format": "time_series",
                             "legendFormat": "",
                             "legendLink": null
@@ -181,25 +181,25 @@
                     "steppedLine": false,
                     "targets": [
                         {
-                            "expr": "sum(guardrail_detections_by_detector{detector=\"hap\"})",
+                            "expr": "round(sum(increase(guardrail_detections_by_detector{detector=\"hap\"}[$__rate_interval])))",
                             "format": "time_series",
                             "legendFormat": "Swearing (HAP)",
                             "legendLink": null
                         },
                         {
-                            "expr": "sum(guardrail_detections_by_detector{detector=\"language_detection\"})",
+                            "expr": "round(sum(increase(guardrail_detections_by_detector{detector=\"language_detection\"}[$__rate_interval])))",
                             "format": "time_series",
                             "legendFormat": "Non-English",
                             "legendLink": null
                         },
                         {
-                            "expr": "sum(guardrail_detections_by_detector{detector=\"prompt_injection\"})",
+                            "expr": "round(sum(increase(guardrail_detections_by_detector{detector=\"prompt_injection\"}[$__rate_interval])))",
                             "format": "time_series",
                             "legendFormat": "Jailbreak",
                             "legendLink": null
                         },
                         {
-                            "expr": "sum(guardrail_detections_by_detector{detector=\"regex_competitor\"})",
+                            "expr": "round(sum(increase(guardrail_detections_by_detector{detector=\"regex_competitor\"}[$__rate_interval])))",
                             "format": "time_series",
                             "legendFormat": "Non-Lemon",
                             "legendLink": null
@@ -262,13 +262,13 @@
                     "steppedLine": false,
                     "targets": [
                         {
-                            "expr": "sum(guardrail_detections_by_direction{direction=\"input\"})",
+                            "expr": "round(sum(increase(guardrail_detections_by_direction{direction=\"input\"}[$__range])))",
                             "format": "time_series",
                             "legendFormat": "Input Blocked",
                             "legendLink": null
                         },
                         {
-                            "expr": "sum(guardrail_detections_by_direction{direction=\"output\"})",
+                            "expr": "round(sum(increase(guardrail_detections_by_direction{direction=\"output\"}[$__range])))",
                             "format": "time_series",
                             "legendFormat": "Output Blocked",
                             "legendLink": null
@@ -344,19 +344,19 @@
                     "steppedLine": false,
                     "targets": [
                         {
-                            "expr": "sum(guardrail_requests_total)",
+                            "expr": "round(sum(increase(guardrail_requests_total[$__range])))",
                             "format": "time_series",
                             "legendFormat": "Total Requests",
                             "legendLink": null
                         },
                         {
-                            "expr": "sum(guardrail_requests_total) - sum(guardrail_detections_total)",
+                            "expr": "round(sum(increase(guardrail_requests_total[$__range]))) - round(sum(increase(guardrail_detections_total[$__range])))",
                             "format": "time_series",
                             "legendFormat": "Approved",
                             "legendLink": null
                         },
                         {
-                            "expr": "sum(guardrail_detections_total)",
+                            "expr": "round(sum(increase(guardrail_detections_total[$__range])))",
                             "format": "time_series",
                             "legendFormat": "Blocked",
                             "legendLink": null
@@ -402,7 +402,7 @@
                     "span": 12,
                     "targets": [
                         {
-                            "expr": "sum(guardrail_local_regex_blocks_total)",
+                            "expr": "round(sum(increase(guardrail_local_regex_blocks_total[$__range])))",
                             "format": "time_series",
                             "legendFormat": "",
                             "legendLink": null

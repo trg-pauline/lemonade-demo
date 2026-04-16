@@ -305,15 +305,23 @@ app = FastAPI(
 # Request/Response Models
 # =============================================================================
 
+class GuardrailsConfig(BaseModel):
+    hap: bool = True
+    language: bool = True
+    injection: bool = True
+    regex: bool = True
+
+
 class ChatRequest(BaseModel):
     message: str
+    guardrails: GuardrailsConfig = GuardrailsConfig()
 
 
 # =============================================================================
 # Core Chat Logic with aiohttp SSE Streaming
 # =============================================================================
 
-async def process_chat(message: str) -> AsyncGenerator[dict, None]:
+async def process_chat(message: str, guardrails: GuardrailsConfig = GuardrailsConfig()) -> AsyncGenerator[dict, None]:
     """Process chat message and yield SSE events using aiohttp."""
 
     logger.debug("===== New chat request =====")
@@ -332,28 +340,43 @@ async def process_chat(message: str) -> AsyncGenerator[dict, None]:
 
     # LOCAL REGEX CHECK: Pre-filter before sending to orchestrator
     # This reduces load on the orchestrator by catching obvious violations locally
-    logger.debug("Checking local regex patterns...")
-    if check_regex_locally(message):
-        # Find which pattern matched for logging
-        for i, pattern in enumerate(COMPILED_REGEX_PATTERNS):
-            match = pattern.search(message)
-            if match:
-                logger.debug(f"Local regex BLOCKED - pattern #{i} matched: {repr(match.group())}")
-                logger.debug(f"Pattern: {ALL_REGEX_PATTERNS[i][:100]}...")
-                break
-        await metrics.increment_local_regex_block()
-        yield {"type": "blocked", "detail": "Off-topic content detected (regex)"}
-        yield {
-            "type": "error",
-            "message": DETECTOR_MESSAGES["regex_competitor_input"] + " Is there anything else I can help you with?",
-            "detector_type": "regex"
-        }
-        return
-    logger.debug("Local regex check passed")
+    if guardrails.regex:
+        logger.debug("Checking local regex patterns...")
+        if check_regex_locally(message):
+            # Find which pattern matched for logging
+            for i, pattern in enumerate(COMPILED_REGEX_PATTERNS):
+                match = pattern.search(message)
+                if match:
+                    logger.debug(f"Local regex BLOCKED - pattern #{i} matched: {repr(match.group())}")
+                    logger.debug(f"Pattern: {ALL_REGEX_PATTERNS[i][:100]}...")
+                    break
+            await metrics.increment_local_regex_block()
+            yield {"type": "blocked", "detail": "Off-topic content detected (regex)"}
+            yield {
+                "type": "error",
+                "message": DETECTOR_MESSAGES["regex_competitor_input"] + " Is there anything else I can help you with?",
+                "detector_type": "regex"
+            }
+            return
+        logger.debug("Local regex check passed")
+    else:
+        logger.debug("Regex guardrail disabled, skipping local regex check")
 
-    # Build request payload - regex already checked locally, so only send to orchestrator
-    # for HAP, prompt injection, and language detection
-    # Note: We still include regex_competitor for OUTPUT detection (LLM responses)
+    # Build request payload with detectors based on guardrails config
+    input_detectors = {}
+    output_detectors = {}
+
+    if guardrails.hap:
+        input_detectors["hap"] = {}
+        output_detectors["hap"] = {}
+    if guardrails.language:
+        input_detectors["language_detection"] = {}
+        output_detectors["language_detection"] = {}
+    if guardrails.injection:
+        input_detectors["prompt_injection"] = {}
+    if guardrails.regex:
+        output_detectors["regex_competitor"] = {"regex": ALL_REGEX_PATTERNS}
+
     payload = {
         "model": VLLM_MODEL,
         "messages": [
@@ -364,18 +387,8 @@ async def process_chat(message: str) -> AsyncGenerator[dict, None]:
         "max_tokens": 200,
         "temperature": 0,
         "detectors": {
-            "input": {
-                "hap": {},
-                "language_detection": {},
-                "prompt_injection": {}
-            },
-            "output": {
-                "hap": {},
-                "regex_competitor": {
-                    "regex": ALL_REGEX_PATTERNS
-                },
-                "language_detection": {}
-            }
+            "input": input_detectors,
+            "output": output_detectors
         }
     }
 
@@ -545,9 +558,6 @@ async def process_chat(message: str) -> AsyncGenerator[dict, None]:
 
                             full_response += content
                             yield {"type": "chunk", "content": content}
-                            # Add newline after each chunk for markdown formatting
-                            full_response += "\n"
-                            yield {"type": "chunk", "content": "\n"}
 
                 if full_response:
                     logger.debug("Stream completed successfully")
@@ -618,7 +628,7 @@ async def chat(request: ChatRequest):
     """SSE streaming chat endpoint with real-time streaming."""
 
     async def generate():
-        async for event in process_chat(request.message):
+        async for event in process_chat(request.message, request.guardrails):
             yield f"data: {json.dumps(event)}\n\n"
 
     return StreamingResponse(
