@@ -85,32 +85,6 @@ MAX_INPUT_CHARS = 100
 ALL_REGEX_PATTERNS = [
     # English fruits
     r"\b(?i:oranges?|apples?|cranberr(?:y|ies)|pineapples?|grapes?|strawberr(?:y|ies)|blueberr(?:y|ies)|watermelons?|durians?|cloudberr(?:y|ies)|bananas?|mangoes?|peaches?|pears?|plums?|cherr(?:y|ies)|kiwifruits?|kiwis?|papayas?|avocados?|coconuts?|raspberr(?:y|ies)|blackberr(?:y|ies)|pomegranates?|figs?|apricots?|nectarines?|tangerines?|clementines?|grapefruits?|limes?|passionfruits?|dragonfruits?|lychees?|guavas?|persimmons?)\b",
-    # Turkish fruits
-    r"\b(?i:portakals?|elmalar?|kızılcık(?:lar)?|ananaslar?|üzümler?|çilek(?:ler)?|yaban mersin(?:leri)?|karpuzlar?|durianlar?|bulutot(?:u|ları)?|muzlar?|mango(?:lar)?|şeftaliler?|armutlar?|erikler?|kiraz(?:lar)?|kiviler?|papayalar?|avokadolar?|hindistan cevizi(?:ler)?|ahududular?|böğürtlen(?:ler)?|nar(?:lar)?|incir(?:ler)?|hurmalar?|kayısı(?:lar)?|nektarin(?:ler)?|mandalina(?:lar)?|klementin(?:ler)?|greyfurt(?:lar)?|lime(?:lar)?|passionfruit(?:lar)?|ejder meyvesi(?:ler)?|liçi(?:ler)?|hurma(?:lar)?)\b",
-    # Swedish fruits
-    r"\b(?i:apelsin(?:er)?|äpple(?:n)?|tranbär(?:en)?|ananas(?:er)?|druv(?:a|or)?|jordgubb(?:e|ar)?|blåbär(?:en)?|vattenmelon(?:er)?|durian(?:er)?|hjortron(?:en)?|banan(?:er)?|mango(?:r)?|persika(?:or)?|päron(?:en)?|plommon(?:en)?|körsbär(?:en)?|kiwi(?:er)?|papaya(?:or)?|avokado(?:r)?|kokosnöt(?:ter)?|hallon(?:en)?|björnbär(?:en)?|granatäpple(?:n)?|fikon(?:en)?|dadel(?:ar)?|aprikos(?:er)?|nektarin(?:er)?|mandarin(?:er)?|klementin(?:er)?|grapefrukt(?:er)?|lime(?:r)?|passionsfrukt(?:er)?|drakfrukt(?:er)?|litchi(?:er)?|guava(?:or)?|kaki(?:frukter)?)\b",
-    # Finnish fruits
-    r"\b(?i:appelsiini(?:t|a|n)?|omena(?:t|a|n)?|karpalo(?:t|ita|n)?|ananas(?:t|ia|en)?|viinirypäle(?:et|itä|en)?|mansikka(?:t|a|n)?|mustikka(?:t|a|n)?|vesimeloni(?:t|a|n)?|durian(?:it|ia|in)?|lakka(?:t|a|n)?|banaani(?:t|a|n)?|mango(?:t|a|n)?|persikka(?:t|a|n)?|päärynä(?:t|ä|n)?|luumu(?:t|ja|n)?|kirsikka(?:t|a|n)?|kiivi(?:t|ä|n)?|papaja(?:t|a|n)?|avokado(?:t|a|n)?|kookospähkinä(?:t|ä|n)?|vadelma(?:t|a|n)?|karhunvatukka(?:t|a|n)?|granaattiomena(?:t|a|n)?|viikuna(?:t|a|n)?|taateli(?:t|a|n)?|aprikoosi(?:t|a|n)?|nektariini(?:t|a|n)?|mandariini(?:t|a|n)?|klementiini(?:t|a|n)?|greippi(?:t|ä|n)?|lime(?:t|ä|n)?|passionhedelmä(?:t|ä|n)?|lohikäärmehedelmä(?:t|ä|n)?|litsi(?:t|ä|n)?|guava(?:t|a|n)?|persimoni(?:t|a|n)?)\b",
-    # Dutch fruits
-    r"\b(?i:sinaasappel(?:en)?|appel(?:s)?|veenbes(?:sen)?|ananas(?:sen)?|druif(?:fen)?|aardbei(?:en)?|blauwe bes(?:sen)?|watermeloen(?:en)?|durian(?:s)?|honingbes(?:sen)?|banaan(?:en)?|mango(?:'s|s)?|perzik(?:ken)?|peer(?:en)?|pruim(?:en)?|kers(?:en)?|kiwi(?:'s|s)?|papaja(?:'s|s)?|avocado(?:'s|s)?|kokosnoot(?:en)?|framboos(?:zen)?|braam(?:men)?|granaatappel(?:en)?|vijg(?:en)?|dadel(?:s|en)?|abrikoos(?:zen)?|nectarine(?:n)?|mandarijn(?:en)?|clementine(?:n)?|grapefruit(?:s|en)?|limoen(?:en)?|passievrucht(?:en)?|draakvrucht(?:en)?|lychee(?:s|'s)?|guave(?:s|n)?|kaki(?:'s|s)?)\b",
-    # French fruits
-    r"\b(?i:orange(?:s)?|pomme(?:s)?|canneberge(?:s)?|ananas(?:s)?|raisin(?:s)?|fraise(?:s)?|myrtille(?:s)?|pastèque(?:s)?|durian(?:s)?|airelle(?:s)?|banane(?:s)?|mangue(?:s)?|pêche(?:s)?|poire(?:s)?|cerise(?:s)?|kiwi(?:s)?|papaye(?:s)?|avocat(?:s)?|noix de coco|framboise(?:s)?|mûre(?:s)?|grenade(?:s)?|figue(?:s)?|datte(?:s)?|abricot(?:s)?|nectarine(?:s)?|mandarine(?:s)?|clémentine(?:s)?|pamplemousse(?:s)?|citron vert|fruit de la passion(?:s)?|fruit du dragon(?:s)?|litchi(?:s)?|goyave(?:s)?|kaki(?:s)?)\b",
-    # Spanish fruits
-    r"\b(?i:naranja(?:s)?|manzana(?:s)?|arándano(?:s)?|piña(?:s)?|uva(?:s)?|fresa(?:s)?|arándano azul(?:es)?|sandía(?:s)?|durian(?:es)?|mora ártica(?:s)?|plátano(?:s)?|mango(?:s)?|melocotón(?:es)?|pera(?:s)?|ciruela(?:s)?|cereza(?:s)?|kiwi(?:s)?|papaya(?:s)?|aguacate(?:s)?|coco(?:s)?|frambuesa(?:s)?|mora(?:s)?|granada(?:s)?|higo(?:s)?|dátil(?:es)?|albaricoque(?:s)?|nectarina(?:s)?|mandarina(?:s)?|clementina(?:s)?|pomelo(?:s)?|lima(?:s)?|fruta de la pasión(?:es)?|fruta del dragón(?:es)?|lichi(?:s)?|guayaba(?:s)?|caqui(?:s)?)\b",
-    # German fruits
-    r"\b(?i:orange(?:n)?|apfel(?:s)?|preiselbeere(?:n)?|ananas(?:se)?|traube(?:n)?|erdbeere(?:n)?|blaubeere(?:n)?|wassermelone(?:n)?|durian(?:s)?|moltebeere(?:n)?|banane(?:n)?|mango(?:s)?|pfirsich(?:e|en)?|birne(?:n)?|pflaume(?:n)?|kirsche(?:n)?|kiwi(?:s)?|papaya(?:s)?|avocado(?:s)?|kokosnuss(?:e|n)?|himbeere(?:n)?|brombeere(?:n)?|granatapfel(?:¨e|n)?|feige(?:n)?|dattel(?:n)?|aprikose(?:n)?|nektarine(?:n)?|mandarine(?:n)?|klementine(?:n)?|grapefruit(?:s)?|limette(?:n)?|passionsfrucht(?:¨e|en)?|drachenfrucht(?:¨e|en)?|litschi(?:s)?|guave(?:n)?|kaki(?:s)?)\b",
-    # Japanese fruits
-    r"\b(?i:オレンジ|みかん|リンゴ|クランベリー|パイナップル|ぶどう|イチゴ|ブルーベリー|スイカ|ドリアン|クラウドベリー|バナナ|マンゴー|モモ|ナシ|スモモ|サクランボ|キウイ|パパイヤ|アボカド|ココナッツ|ラズベリー|ブラックベリー|ザクロ|イチジク|ナツメ|アプリコット|ネクタリン|タンジェリン|クレメンタイン|グレープフルーツ|ライム|パッションフルーツ|ドラゴンフルーツ|ライチ|グアバ|柿)\b",
-    # Russian fruits
-    r"\b(?i:апельсин(?:ы)?|яблоко(?:а|и)?|клюква(?:ы)?|ананас(?:ы)?|виноград(?:ы)?|клубника(?:и)?|черника(?:и)?|арбуз(?:ы)?|дуриан(?:ы)?|морошка(?:и)?|банан(?:ы)?|манго(?:ы)?|персик(?:и)?|груша(?:и)?|слива(?:ы)?|вишня(?:и)?|киви(?:и)?|папайя(?:и)?|авокадо(?:ы)?|кокос(?:ы)?|малина(?:ы)?|ежевика(?:и)?|гранат(?:ы)?|инжир(?:ы)?|финик(?:и)?|абрикос(?:ы)?|нектарин(?:ы)?|мандарин(?:ы)?|клементин(?:ы)?|грейпфрут(?:ы)?|лайм(?:ы)?|маракуйя|драконий фрукт|личи|гуава(?:ы)?|хурма(?:ы)?)\b",
-    # Italian fruits
-    r"\b(?i:arancia(?:e)?|mela(?:e)?|mirtillo rosso(?:i)?|ananas(?:i)?|uva(?:e)?|fragola(?:e)?|mirtillo(?:i)?|anguria(?:e)?|durian(?:i)?|lampone(?:i)?|banana(?:e)?|mango(?:i)?|pesca(?:he)?|pera(?:e)?|prugna(?:e)?|ciliegia(?:he)?|kiwi(?:s)?|papaya(?:e)?|avocado(?:i)?|cocco(?:i)?|lampone(?:i)?|mora(?:e)?|melograno(?:i)?|fico(?:chi)?|dattero(?:i)?|albicocca(?:he)?|nettarella(?:e)?|mandarino(?:i)?|clementina(?:e)?|pompelmo(?:i)?|lime(?:s)?|frutto della passione(?:i)?|frutto del drago(?:i)?|litchi(?:s)?|guava(?:e)?|cachi?)\b",
-    # Polish fruits
-    r"\b(?i:pomarańcza(?:e|y)?|jabłko(?:a|i)?|żurawina(?:y)?|ananasy?|winogrono(?:a|a)?|truskawka(?:i|ek)?|jagoda(?:i|y)?|arbuz(?:y)?|durian(?:y)?|moroszka(?:i)?|banan(?:y|ów)?|mango(?:a|i)?|brzoskwinia(?:e|y)?|gruszka(?:i|ek)?|śliwka(?:i|ek)?|wiśnia(?:e|i)?|kiwi(?:i)?|papaja(?:e|y)?|awokado(?:a)?|kokos(?:y)?|malina(?:y)?|jeżyna(?:y)?|granat(?:y)?|figa(?:i)?|daktyl(?:e)?|morela(?:e|y)?|nektaryna(?:y)?|mandarynka(?:i|ek)?|klementynka(?:i|ek)?|grejpfrut(?:y)?|limonka(?:i)?|marakuja(?:e|y)?|smoczy owoc(?:y)?|liczi(?:e)?|guawa(?:y)?|persymona(?:y)?)\b",
-    # Chinese fruits
-    r"\b(?i:橙子|桔子|苹果|蔓越莓|菠萝|葡萄|草莓|蓝莓|西瓜|榴莲|云莓|香蕉|芒果|桃子|梨|李子|樱桃|猕猴桃|木瓜|牛油果|椰子|覆盆子|黑莓|石榴|无花果|枣|杏|油桃|柑橘|柑橘类|柠檬|百香果|火龙果|荔枝|番石榴|柿子)\b",
-    # Hindi fruits
-    r"\b(?i:संतरा|ऑरेंज|सेब|क्रैनबेरी|अनानास|अंगूर|स्ट्रॉबेरी|ब्लूबेरी|तरबूज|ड्यूरियन|क्लाउडबेरी|केला|मैंगो|आड़ू|नाशपाती|आलूबुखारा|चेरी|कीवी|पपीता|एवोकाडो|नारियल|रास्पबेरी|ब्लैकबेरी|अनार|अंजीर|खजूर|खुबानी|नेकटेरिन|मंडारिन|क्लेमेंटाइन|ग्रेपफ्रूट|नींबू|पासनफ्रूट|ड्रैगन फ्रूट|लीची|अमरूद|तेंदू)\b",
 ]
 
 
@@ -133,10 +107,10 @@ def check_regex_locally(text: str) -> bool:
 # User-friendly messages for each detector type (differentiated by input/output)
 DETECTOR_MESSAGES = {
     # HAP (Hate, Abuse, Profanity)
-    "hap_input": "🛑 Your message was flagged for harmful content by Granite Guardian HAP detector.",
-    "hap_output": "🛑 The response was blocked for harmful content by Granite Guardian HAP detector.",
+    "hap_input": "⛔ Your message was blocked for harmful content by Granite Guardian HAP detector.",
+    "hap_output": "⛔ The response was blocked for harmful content by Granite Guardian HAP detector.",
     # Prompt injection (typically only on input)
-    "prompt_injection_input": "🛡️ Prompt injection detected by DeBERTa v3 detector. Your message appears to contain instructions that try to override the system rules.",
+    "prompt_injection_input": "🛡️ Prompt injection blocked by DeBERTa v3 detector. Your message appears to contain instructions that try to override the system rules.",
     "prompt_injection_output": "🛡️ The response was blocked for containing suspicious instructions (DeBERTa v3 detector).",
     # Regex competitor (fruit/topic detection)
     "regex_competitor_input": "🍋 I can only discuss lemons! Other fruits and off-topic subjects are not allowed.",
@@ -315,13 +289,14 @@ class GuardrailsConfig(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     guardrails: GuardrailsConfig = GuardrailsConfig()
+    system_prompt: str | None = None
 
 
 # =============================================================================
 # Core Chat Logic with aiohttp SSE Streaming
 # =============================================================================
 
-async def process_chat(message: str, guardrails: GuardrailsConfig = GuardrailsConfig()) -> AsyncGenerator[dict, None]:
+async def process_chat(message: str, guardrails: GuardrailsConfig = GuardrailsConfig(), system_prompt: str | None = None) -> AsyncGenerator[dict, None]:
     """Process chat message and yield SSE events using aiohttp."""
 
     logger.debug("===== New chat request =====")
@@ -380,7 +355,7 @@ async def process_chat(message: str, guardrails: GuardrailsConfig = GuardrailsCo
     payload = {
         "model": VLLM_MODEL,
         "messages": [
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt or SYSTEM_PROMPT},
             {"role": "user", "content": message}
         ],
         "stream": True,
@@ -566,7 +541,7 @@ async def process_chat(message: str, guardrails: GuardrailsConfig = GuardrailsCo
 
                     # Check if response was truncated due to token limit
                     if last_finish_reason == "length":
-                        truncation_msg = "\n\n---\n🍋🍋🍋 Maximum Response Length Reached 🍋🍋🍋\n\n_To keep the lemonade flowing for everyone, we've cut-off this response to a maximum length. Try asking a question that can be answered with a shorter response!_"
+                        truncation_msg = '\n\n<div class="truncation-warning"><strong>⚠️ MAXIMUM RESPONSE LENGTH REACHED</strong><br>This response was cut off because it reached the maximum token limit. Try asking a question that can be answered with a shorter response.</div>'
                         yield {"type": "chunk", "content": truncation_msg}
                         logger.debug("Response truncated (finish_reason=length), appended truncation message")
 
@@ -628,7 +603,7 @@ async def chat(request: ChatRequest):
     """SSE streaming chat endpoint with real-time streaming."""
 
     async def generate():
-        async for event in process_chat(request.message, request.guardrails):
+        async for event in process_chat(request.message, request.guardrails, request.system_prompt):
             yield f"data: {json.dumps(event)}\n\n"
 
     return StreamingResponse(
@@ -640,6 +615,12 @@ async def chat(request: ChatRequest):
             "X-Accel-Buffering": "no",
         },
     )
+
+
+@app.get("/api/prompt")
+async def get_prompt():
+    """Return the default system prompt."""
+    return {"prompt": SYSTEM_PROMPT}
 
 
 @app.get("/health")

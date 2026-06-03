@@ -1,7 +1,7 @@
 ---
 # Application image
 app:
-  image: "quay.io/mouachan/lemonade-chatbot:1.0"
+  image: "quay.io/ptruong/lemonade-app:1.0"
 
 # LLM configuration
 # Option 1: Use local model (requires GPU)
