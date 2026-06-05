@@ -111,13 +111,13 @@ DETECTOR_MESSAGES = {
     "hap_output": "⛔ The response was blocked for harmful content by Granite Guardian HAP detector.",
     # Prompt injection (typically only on input)
     "prompt_injection_input": "🛡️ Prompt injection blocked by DeBERTa v3 detector. Your message appears to contain instructions that try to override the system rules.",
-    "prompt_injection_output": "🛡️ The response was blocked for containing suspicious instructions (DeBERTa v3 detector).",
+    "prompt_injection_output": "🛡️ The response was blocked for containing suspicious instructions by DeBERTa v3 detector.",
     # Regex competitor (fruit/topic detection)
     "regex_competitor_input": "🍋 I can only discuss lemons! Other fruits and off-topic subjects are not allowed.",
-    "regex_competitor_output": "🍋 Oops! I almost talked about other fruits. Let's stick to lemons!",
+    "regex_competitor_output": "🍋 Oops, I almost talked about other fruits! Let's stick to lemons.",
     # Language detection
     "language_detection_input": "🌐 Non-English language blocked by Lingua detector. Please rephrase your message in English.",
-    "language_detection_output": "🌐 The response was blocked for non-English content (Lingua detector).",
+    "language_detection_output": "🌐 The response was blocked for non-English content by Lingua detector.",
 }
 
 # =============================================================================
