@@ -1,4 +1,18 @@
 {{- if .Values.metrics.dashboard.enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-monitoring-config
+  namespace: openshift-monitoring
+  labels:
+    app: lemonade-stand
+    app.kubernetes.io/name: lemonade-stand
+    app.kubernetes.io/component: monitoring
+data:
+  config.yaml: |
+    enableUserWorkload: true
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
