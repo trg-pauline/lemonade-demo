@@ -33,7 +33,7 @@ if oc get secret grafana-sa-token -n $NAMESPACE &>/dev/null; then
 fi
 
 # Create token and store in secret with "Bearer " prefix
-TOKEN=$(oc create token prometheus-k8s -n openshift-monitoring --duration=24h)
+TOKEN=$(oc create token prometheus-k8s -n openshift-monitoring --duration=8760h)
 oc create secret generic grafana-sa-token -n $NAMESPACE \
   --from-literal=bearer-token="Bearer $TOKEN"
 echo "Token secret created"
@@ -49,5 +49,5 @@ echo ""
 echo "Next step: install the Grafana Helm chart:"
 echo "  helm install lemonade-grafana ./grafana --namespace $NAMESPACE"
 echo ""
-echo "Note: Token expires after 24 hours. Re-run this script to refresh."
+echo "Note: Token expires after 1 year (8760h). Re-run this script to refresh."
 echo ""
